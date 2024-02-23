@@ -1,0 +1,12 @@
+go 1.21.4
+
+use (
+	./api
+	./clearing
+	./common/utils
+	./common/models
+	./init
+	./legacy/models
+	./legacy/task_register
+	./proxy
+)

@@ -1,0 +1,741 @@
+basePath: /v1
+definitions:
+  models.ApiResponse:
+    properties:
+      data: {}
+      message:
+        type: string
+      meta:
+        $ref: '#/definitions/models.ApiResponseMeta'
+      success:
+        type: boolean
+    type: object
+  models.ApiResponseMeta:
+    additionalProperties: true
+    type: object
+  models.ClearingBatchType:
+    properties:
+      description:
+        type: string
+      id:
+        type: integer
+      label:
+        type: string
+      multiplier:
+        type: number
+      project_id:
+        type: integer
+    type: object
+  models.ClearingLedgerLabel:
+    properties:
+      description:
+        type: string
+      id:
+        type: integer
+      label:
+        type: string
+    type: object
+  models.ClearingLedgerStatus:
+    properties:
+      description:
+        type: string
+      id:
+        type: integer
+      label:
+        type: string
+      withdrawable:
+        type: boolean
+    type: object
+  models.ClearingTask:
+    properties:
+      clearing_batch_id:
+        type: integer
+      clearing_task_id:
+        type: integer
+      clearing_task_status_id:
+        type: integer
+      clearing_task_type_id:
+        type: integer
+      id:
+        type: integer
+      input:
+        type: string
+      output:
+        type: string
+      user_id:
+        type: integer
+    type: object
+  models.ClearingTaskFee:
+    properties:
+      clearing_task_type_id:
+        type: integer
+      clearing_token_id:
+        type: integer
+      project_id:
+        type: integer
+      subtask_fee:
+        type: number
+      task_fee:
+        type: number
+      user_id:
+        type: integer
+    type: object
+  models.ClearingTaskStatus:
+    properties:
+      description:
+        type: string
+      id:
+        type: integer
+      label:
+        type: string
+      parent_payable:
+        type: boolean
+      payable:
+        type: boolean
+    type: object
+  models.ClearingTaskType:
+    properties:
+      description:
+        type: string
+      id:
+        type: integer
+      label:
+        type: string
+      subtask_payable:
+        type: boolean
+      task_payable:
+        type: boolean
+    type: object
+  models.ClearingToken:
+    properties:
+      clearing_token_type:
+        $ref: '#/definitions/models.ClearingTokenType'
+      description:
+        type: string
+      id:
+        type: integer
+      label:
+        type: string
+      symbol:
+        type: string
+    type: object
+  models.ClearingTokenType:
+    properties:
+      description:
+        type: string
+      id:
+        type: integer
+      label:
+        type: string
+    type: object
+  models.ClearingWalletsDetailedView:
+    properties:
+      amount:
+        type: number
+      count:
+        type: integer
+      label:
+        type: string
+      project:
+        type: string
+      symbol:
+        type: string
+      updated_at:
+        type: string
+      withdrawable:
+        type: boolean
+    type: object
+  models.ClearingWalletsSummedView:
+    properties:
+      amount:
+        type: number
+      token_symbol:
+        type: string
+      updated_at:
+        type: string
+      withdrawable:
+        type: boolean
+    type: object
+info:
+  contact: {}
+paths:
+  /batches/statuses:
+    get:
+      consumes:
+      - application/json
+      description: get list of possible batch statuses
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ApiResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/models.ClearingBatchType'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ApiResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ApiResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
+      summary: batch statuses
+      tags:
+      - /batches
+  /batches/types:
+    get:
+      consumes:
+      - application/json
+      description: get list of possible batch types
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ApiResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/models.ClearingBatchType'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ApiResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ApiResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
+      summary: batch types
+      tags:
+      - /batches
+  /ledger/labels:
+    get:
+      consumes:
+      - application/json
+      description: get list of possible ledger entry labels
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ApiResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/models.ClearingLedgerLabel'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ApiResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ApiResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
+      summary: ledger entry labels
+      tags:
+      - /ledger
+  /ledger/statuses:
+    get:
+      consumes:
+      - application/json
+      description: get list of possible token ledger statuses
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ApiResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/models.ClearingLedgerStatus'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ApiResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ApiResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
+      summary: ledger entry statuses
+      tags:
+      - /ledger
+  /tasks:
+    post:
+      consumes:
+      - application/json
+      description: register task
+      parameters:
+      - description: json request body, omit 'id' or set to 0, otherwise value will
+          be used, 'input' and 'output' must be valid JSON if supplied
+        in: body
+        name: request
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.ClearingTask'
+          type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ApiResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/models.ClearingTask'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ApiResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ApiResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
+      summary: task register
+      tags:
+      - /tasks
+  /tasks/fees:
+    delete:
+      consumes:
+      - application/json
+      description: delete task/subtask fees for user per project
+      parameters:
+      - description: json request body, fields not forming part of the composite index
+          are ignored
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.ClearingTaskFee'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ApiResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ApiResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ApiResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
+      summary: delete fee
+      tags:
+      - /tasks
+    get:
+      consumes:
+      - application/json
+      description: get task/subtask fees per user per project
+      parameters:
+      - description: user/grinder id
+        in: query
+        name: user_id
+        required: true
+        type: integer
+      - description: project id
+        in: query
+        name: project_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ApiResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/models.ClearingTaskFee'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ApiResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ApiResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
+      summary: get fees
+      tags:
+      - /tasks
+    post:
+      consumes:
+      - application/json
+      description: set task/subtask fees for user per project
+      parameters:
+      - description: json request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.ClearingTaskFee'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ApiResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/models.ClearingTaskFee'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ApiResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ApiResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
+      summary: set fees
+      tags:
+      - /tasks
+  /tasks/statuses:
+    get:
+      consumes:
+      - application/json
+      description: get list of possible task statuses
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ApiResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/models.ClearingTaskStatus'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ApiResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ApiResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
+      summary: task statuses
+      tags:
+      - /tasks
+  /tasks/types:
+    get:
+      consumes:
+      - application/json
+      description: get list of possible task types
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ApiResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/models.ClearingTaskType'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ApiResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ApiResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
+      summary: task types
+      tags:
+      - /tasks
+  /tokens:
+    get:
+      consumes:
+      - application/json
+      description: get list of registered tokens w/ type
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ApiResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/models.ClearingToken'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+      summary: token list
+      tags:
+      - /tokens
+  /tokens/types:
+    get:
+      consumes:
+      - application/json
+      description: get list of possible token types
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ApiResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/models.ClearingTokenType'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ApiResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ApiResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
+      summary: token types
+      tags:
+      - /tokens
+  /wallet/summed:
+    get:
+      consumes:
+      - application/json
+      description: get wallet of user summed by token type and status
+      parameters:
+      - description: user/grinder id
+        in: query
+        name: user_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ApiResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/models.ClearingWalletsSummedView'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+      summary: get summed wallet of user
+      tags:
+      - /wallets
+  /wallets/detailed:
+    get:
+      consumes:
+      - application/json
+      description: get wallet of user summed by project, token type and status
+      parameters:
+      - description: user/grinder id
+        in: query
+        name: user_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ApiResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/models.ClearingWalletsDetailedView'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+      summary: get detailed wallet of user
+      tags:
+      - /wallets
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

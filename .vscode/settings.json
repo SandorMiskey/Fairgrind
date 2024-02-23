@@ -1,0 +1,40 @@
+{
+  "cSpell.words": [
+    "adminer",
+    "amqp",
+    "apikey",
+    "BASEPATH",
+    "Burkina",
+    "dotenv",
+    "Eurozone",
+    "fairgrind",
+    "Faso",
+    "FGDT",
+    "godotenv",
+    "gofiber",
+    "GORM",
+    "healthcheck",
+    "Infof",
+    "Inno",
+    "joho",
+    "keyauth",
+    "LOGFORMAT",
+    "martketplace",
+    "MEDIUMINT",
+    "Navicat",
+    "Prefork",
+    "rabbitmq",
+    "requestid",
+    "SMALLINT",
+    "Solana",
+    "suser",
+    "TIMEFORMAT"
+  ],
+  "editor.foldingStrategy": "indentation",
+  "files.exclude": {
+    "**/*.fasthttp.gz": true,
+    "**/main.wasm": true
+  },
+  "html.format.enable": false,
+  "go.inferGopath": false
+}

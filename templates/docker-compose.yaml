@@ -1,0 +1,105 @@
+version: "3.3"
+
+networks:
+  {{.DOCKER_NETWORK}}:
+    external: true
+    # name: {{.DOCKER_NETWORK}}
+
+services:
+  {{.DB_NAME}}:
+    environment:
+      # - MARIADB_ROOT_PASSWORD=example
+      - MARIADB_ROOT_PASSWORD_HASH={{.DB_ROOT}}
+    hostname: {{.DB_NAME}}
+    image: {{.DB_IMAGE}}
+    labels:
+      service: {{.DB_NAME}}
+    networks:
+      {{.DOCKER_NETWORK}}:
+        # ipv4_address: 10.96.0.3
+        aliases:
+          - {{.DB_NAME}}
+          - {{.DB_FQDN}}
+    ports:
+      - {{.DB_PORT}}:3306
+    restart: always
+    volumes:
+      - {{.PATH_WORKBENCH}}/db/etc:/etc/mysql
+      - {{.PATH_WORKBENCH}}/db/data:/var/lib/mysql
+      - {{.PATH_WORKBENCH}}/db/init:/docker-entrypoint-initdb.d
+  {{.ADMINER_NAME}}:
+    depends_on:
+      - {{.DB_NAME}}
+    hostname: {{.ADMINER_NAME}}
+    image: {{.ADMINER_IMAGE}}
+    labels:
+      service: {{.ADMINER_NAME}}
+    networks:
+      {{.DOCKER_NETWORK}}:
+        # ipv4_address: 10.96.0.4
+        aliases:
+          - {{.ADMINER_NAME}}
+    ports:
+      - {{.ADMINER_PORT}}:8080
+    restart: always
+  {{.MQ_NAME}}:
+    environment:
+      - RABBITMQ_DEFAULT_USER={{.MQ_USER}}
+      - RABBITMQ_DEFAULT_PASS={{.MQ_PASSWORD}}
+    hostname: {{.MQ_NAME}}
+    image: {{.MQ_IMG}}
+    labels:
+      service: {{.MQ_NAME}}
+    networks:
+      {{.DOCKER_NETWORK}}:
+        # ipv4_address: 10.96.0.5
+        aliases:
+          - {{.MQ_NAME}}
+          - {{.MQ_FQDN}}
+    ports:
+      - {{.MQ_PORT_MQ}}:5672
+      - {{.MQ_PORT_MGMT}}:15672
+    restart: always
+    volumes:
+      - {{.PATH_WORKBENCH}}/mq/etc:/etc/rabbitmq/
+      - {{.PATH_WORKBENCH}}/mq/data:/var/lib/rabbitmq
+  {{.CACHE_NAME}}:
+    hostname: {{.CACHE_NAME}}
+    image: {{.CACHE_IMG}}
+    # environment:
+    #   - REDIS_ARGS="--requirepass XXXXX"
+    labels:
+      service: {{.CACHE_NAME}}
+    networks:
+      {{.DOCKER_NETWORK}}:
+        # ipv4_address: 10.96.0.5
+        aliases:
+          - {{.CACHE_NAME}}
+          - {{.CACHE_FQDN}}
+    ports:
+      - {{.CACHE_PORT_REDIS}}:6379
+      - {{.CACHE_PORT_INSIGHT}}:8001
+    restart: always
+    volumes:
+      - {{.PATH_WORKBENCH}}/cache/redis-stack.conf:/redis-stack.conf
+      - {{.PATH_WORKBENCH}}/cache/data:/data
+      - {{.PATH_WORKBENCH}}/cache/data:/db
+  {{.CDC_NAME}}:
+    command: bin/maxwell --config /app/config.properties
+    depends_on:
+      - {{.DB_NAME}}
+      - {{.MQ_NAME}}
+      - {{.CACHE_NAME}}
+    hostname: {{.CDC_NAME}}
+    image: {{.CDC_IMAGE}}
+    labels:
+      service: {{.CDC_NAME}}
+    networks:
+      {{.DOCKER_NETWORK}}:
+        # ipv4_address: 10.96.0.3
+        aliases:
+          - {{.CDC_NAME}}
+          - {{.CDC_FQDN}}
+    restart: always
+    volumes:
+      - {{.PATH_WORKBENCH}}/cdc/config.properties:/app/config.properties
