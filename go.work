@@ -6,7 +6,5 @@ use (
 	./common/utils
 	./common/models
 	./init
-	./legacy/models
-	./legacy/task_register
 	./proxy
 )

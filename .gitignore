@@ -1,8 +1,9 @@
 bin
+env.sh
+legacy/
 proto/
 workbench
 wbench
-env.sh
 
 # Created by https://www.toptal.com/developers/gitignore/api/go,vim,web,macos,linux,visualstudiocode,node
 # Edit at https://www.toptal.com/developers/gitignore?templates=go,vim,web,macos,linux,visualstudiocode,node
