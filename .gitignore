@@ -1,3 +1,4 @@
+api/swagger/
 bin
 env.sh
 erc20/venv/
