@@ -1,4 +1,5 @@
-api/swagger/
+api/swagger/docs.go
+api/swagger/swagger*
 bin
 env.sh
 erc20/venv/
