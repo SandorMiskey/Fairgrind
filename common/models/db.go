@@ -6,8 +6,6 @@ import (
 	"gorm.io/gorm"
 )
 
-// region: db
-
 type GORM struct {
 	ID        uint           `json:"id" form:"id" gorm:"primaryKey"`
 	CreatedAt time.Time      `json:"-"`
@@ -19,7 +17,6 @@ type GORM struct {
 
 type ClearingBatchType struct {
 	GORM
-	ProjectId   uint    `json:"project_id" gorm:"type:int(11);"`
 	Label       string  `json:"label"`
 	Description string  `json:"description"`
 	Multiplier  float64 `json:"multiplier"`
@@ -41,6 +38,7 @@ type ClearingBatch struct {
 	ClearingBatchStatusId uint                `json:"-" gorm:"type:SMALLINT UNSIGNED;"`
 	ClearingBatchStatus   ClearingBatchStatus `json:"clearing_batch_status"`
 	Label                 string              `json:"label"`
+	ProjectId             uint                `json:"project_id" gorm:"type:int(11);"`
 	Description           string              `json:"description"`
 }
 
@@ -146,7 +144,5 @@ type ClearingWalletsDetailedView struct {
 	ProjectId                        uint      `json:"-"`
 	ProjectName                      string    `json:"project"`
 }
-
-// endregion
 
 // endregion
