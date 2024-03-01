@@ -94,9 +94,9 @@ func v1_tasks_post(c *fiber.Ctx) error {
 // @Param			task_status_id	query		int		false	"task status id"
 // @Param			task_type_id	query		int		false	"task type id"
 // @Param			user_id			query		int		false	"user/grinder id"
-// @Param			order_by		query		string	false	"order by <param> <direction>, as in 'task_status_id asc, task_type_id desc'"
-// @Param			page			query		int		false	"which page"
-// @Param			size			query		int		false	"page size (aka # of results)"
+// @Param			orm_order_by	query		string	false	"order by <param> <direction>, as in 'task_status_id asc, task_type_id desc'"
+// @Param			orm_page		query		int		false	"which page"
+// @Param			orm_size		query		int		false	"page size (aka # of results)"
 // @Success		200				{object}	models.ApiResponse{data=[]models.ClearingTask}
 // @Failure		400				{object}	models.ApiResponse{data=nil}
 // @Failure		500				{object}	models.ApiResponse{data=nil}
@@ -121,14 +121,19 @@ func v1_tasks_get(c *fiber.Ctx) error {
 		UserId: uint(c.QueryInt("user_id", 0)),
 	}
 
-	order := c.Query("order_by")
-	page := c.QueryInt("page", 0)
-	size := c.QueryInt("size", 0)
+	order := c.Query("orm_order_by")
+	page := c.QueryInt("orm_page", 0)
+	size := c.QueryInt("orm_size", 0)
 
 	// endregion
 	// region: data
 
 	var tasks []models.ClearingTask
+	var count int64
+
+	foo := DB.Model(&models.ClearingTask{}).Where(&filters).Order(order).Count(&count)
+	Logger(LOG_DEBUG, foo)
+
 	result := DB.Scopes(utils.Paginate(page, size)).Where(&filters).Order(order).Find(&tasks)
 	if result.Error != nil {
 		Logger(LOG_ERR, "error while fetching tasks", result.Error.Error())
@@ -140,6 +145,7 @@ func v1_tasks_get(c *fiber.Ctx) error {
 	// region: response
 
 	response.Meta["rows"] = len(tasks)
+	response.Meta["count"] = count
 	response.Data = tasks
 	response.Success = true
 
