@@ -34,14 +34,14 @@ func v1_tokens_get(c *fiber.Ctx) error {
 	result := DB.Preload("ClearingTokenType").Find(&tokens)
 	if result.Error != nil {
 		Logger(LOG_ERR, "error while fetching token types", result.Error.Error())
-		response.Message = result.Error.Error()
+		response.Data = result.Error.Error()
 		return c.Status(500).JSON(response)
 	}
 
 	// endregion
 	// region: response
 
-	response.Meta["rows"] = len(tokens)
+	response.Meta.Rows = len(tokens)
 	response.Data = tokens
 	response.Success = true
 
@@ -76,14 +76,14 @@ func v1_tokens_types_get(c *fiber.Ctx) error {
 	result := DB.Find(&types)
 	if result.Error != nil {
 		Logger(LOG_ERR, "error while fetching token types", result.Error.Error())
-		response.Message = result.Error.Error()
+		response.Data = result.Error.Error()
 		return c.Status(500).JSON(response)
 	}
 
 	// endregion
 	// region: response
 
-	response.Meta["rows"] = len(types)
+	response.Meta.Rows = len(types)
 	response.Data = types
 	response.Success = true
 

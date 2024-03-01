@@ -41,7 +41,7 @@ func v1_wallets_summed_get(c *fiber.Ctx) error {
 
 	user_id := uint(c.QueryInt("user_id", 0))
 	if user_id < 1 {
-		response.Message = "invalid user_id"
+		response.Data = "invalid user_id"
 		return c.Status(400).JSON(response)
 	}
 
@@ -52,14 +52,14 @@ func v1_wallets_summed_get(c *fiber.Ctx) error {
 	result := DB.Table(CLEARING_WALLETS_SUMMED_VIEW).Where(&models.ClearingWalletsSummedView{ClearingLedgerUserId: user_id}).Find(&wallet)
 	if result.Error != nil {
 		Logger(LOG_ERR, "error while fetching wallet", result.Error.Error())
-		response.Message = result.Error.Error()
+		response.Data = result.Error.Error()
 		return c.Status(500).JSON(response)
 	}
 
 	// endregion
 	// region: response
 
-	response.Meta["rows"] = len(wallet)
+	response.Meta.Rows = len(wallet)
 	response.Data = wallet
 	response.Success = true
 
@@ -93,7 +93,7 @@ func v1_wallets_detailed_get(c *fiber.Ctx) error {
 
 	user_id := uint(c.QueryInt("user_id", 0))
 	if user_id < 1 {
-		response.Message = "invalid user_id"
+		response.Data = "invalid user_id"
 		return c.Status(400).JSON(response)
 	}
 
@@ -104,14 +104,14 @@ func v1_wallets_detailed_get(c *fiber.Ctx) error {
 	result := DB.Table(CLEARING_WALLETS_DETAILED_VIEW).Where(&models.ClearingWalletsDetailedView{ClearingLedgerUserId: user_id}).Find(&wallet)
 	if result.Error != nil {
 		Logger(LOG_ERR, "error while fetching wallet", result.Error.Error())
-		response.Message = result.Error.Error()
+		response.Data = result.Error.Error()
 		return c.Status(500).JSON(response)
 	}
 
 	// endregion
 	// region: response
 
-	response.Meta["rows"] = len(wallet)
+	response.Meta.Rows = len(wallet)
 	response.Data = wallet
 	response.Success = true
 

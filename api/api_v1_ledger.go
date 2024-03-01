@@ -12,15 +12,15 @@ import (
 // endregion: packages
 // region: v1_ledger_labels_get
 
-//	@Summary		ledger entry labels
-//	@Description	get list of possible ledger entry labels
-//	@Tags			/ledger
-//	@Accept			json
-//	@Produce		json
-//	@Success		200	{object}	models.ApiResponse{data=[]models.ClearingLedgerLabel}
-//	@Failure		400	{object}	models.ApiResponse{data=nil}
-//	@Failure		500	{object}	models.ApiResponse{data=nil}
-//	@Router			/ledger/labels [get]
+// @Summary		ledger entry labels
+// @Description	get list of possible ledger entry labels
+// @Tags			/ledger
+// @Accept			json
+// @Produce		json
+// @Success		200	{object}	models.ApiResponse{data=[]models.ClearingLedgerLabel}
+// @Failure		400	{object}	models.ApiResponse{data=nil}
+// @Failure		500	{object}	models.ApiResponse{data=nil}
+// @Router			/ledger/labels [get]
 func v1_ledger_labels_get(c *fiber.Ctx) error {
 
 	// region: output
@@ -34,14 +34,14 @@ func v1_ledger_labels_get(c *fiber.Ctx) error {
 	result := DB.Find(&labels)
 	if result.Error != nil {
 		Logger(LOG_ERR, "error while fetching ledger statuses", result.Error.Error())
-		response.Message = result.Error.Error()
+		response.Data = result.Error.Error()
 		return c.Status(500).JSON(response)
 	}
 
 	// endregion
 	// region: response
 
-	response.Meta["rows"] = len(labels)
+	response.Meta.Rows = len(labels)
 	response.Data = labels
 	response.Success = true
 
@@ -54,15 +54,15 @@ func v1_ledger_labels_get(c *fiber.Ctx) error {
 // endregion
 // region: v1_ledger_statuses_get
 
-//	@Summary		ledger entry statuses
-//	@Description	get list of possible token ledger statuses
-//	@Tags			/ledger
-//	@Accept			json
-//	@Produce		json
-//	@Success		200	{object}	models.ApiResponse{data=[]models.ClearingLedgerStatus}
-//	@Failure		400	{object}	models.ApiResponse{data=nil}
-//	@Failure		500	{object}	models.ApiResponse{data=nil}
-//	@Router			/ledger/statuses [get]
+// @Summary		ledger entry statuses
+// @Description	get list of possible token ledger statuses
+// @Tags			/ledger
+// @Accept			json
+// @Produce		json
+// @Success		200	{object}	models.ApiResponse{data=[]models.ClearingLedgerStatus}
+// @Failure		400	{object}	models.ApiResponse{data=nil}
+// @Failure		500	{object}	models.ApiResponse{data=nil}
+// @Router			/ledger/statuses [get]
 func v1_ledger_statuses_get(c *fiber.Ctx) error {
 
 	// region: output
@@ -76,14 +76,14 @@ func v1_ledger_statuses_get(c *fiber.Ctx) error {
 	result := DB.Find(&statuses)
 	if result.Error != nil {
 		Logger(LOG_ERR, "error while fetching ledger statuses", result.Error.Error())
-		response.Message = result.Error.Error()
+		response.Data = result.Error.Error()
 		return c.Status(500).JSON(response)
 	}
 
 	// endregion
 	// region: response
 
-	response.Meta["rows"] = len(statuses)
+	response.Meta.Rows = len(statuses)
 	response.Data = statuses
 	response.Success = true
 

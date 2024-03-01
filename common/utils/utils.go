@@ -92,13 +92,20 @@ func GetLogger(p ...string) *log.Logger {
 }
 
 func GetResponse(c *fiber.Ctx) models.ApiResponse {
-	meta := make(models.ApiResponseMeta)
-	meta["queries"] = c.Queries()
-	meta["body_raw"] = c.BodyRaw()
+	// meta := make(models.ApiResponseMeta)
+	// meta["queries"] = c.Queries()
+	// meta["body_raw"] = c.BodyRaw()
 	// meta["req_headers"] = c.GetReqHeaders()
+	// var meta models.ApiResponseMeta
+	// meta.Queries = c.Queries()
+	// meta.Success = false
 
 	return models.ApiResponse{
-		Meta:    meta,
+		Request: models.ApiRequest{
+			BodyRaw: string(c.BodyRaw()),
+			Queries: c.Queries(),
+			// ReqHeaders: c.GetReqHeaders(),
+		},
 		Success: false,
 	}
 }

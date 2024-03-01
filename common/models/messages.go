@@ -6,11 +6,21 @@ import (
 
 // region: api
 
-type ApiResponseMeta map[string]interface{}
+type ApiRequest struct {
+	BodyRaw    string            `json:"body_raw,omitempty"`
+	Queries    map[string]string `json:"queries,omitempty"`
+	ReqHeaders interface{}       `json:"req_headers,omitempty"`
+}
+
+type ApiResponseMeta struct {
+	Count int64 `json:"count,omitempty"`
+	Rows  int   `json:"rows,omitempty"`
+}
+
 type ApiResponse struct {
 	Data    interface{}     `json:"data"`
-	Message string          `json:"message"`
-	Meta    ApiResponseMeta `json:"meta"`
+	Meta    ApiResponseMeta `json:"meta,omitempty"`
+	Request ApiRequest      `json:"request"`
 	Success bool            `json:"success"`
 }
 

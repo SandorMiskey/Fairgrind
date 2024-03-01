@@ -34,14 +34,14 @@ func v1_batches_types_get(c *fiber.Ctx) error {
 	result := DB.Find(&types)
 	if result.Error != nil {
 		Logger(LOG_ERR, "error while fetching batch types", result.Error.Error())
-		response.Message = result.Error.Error()
+		response.Data = result.Error.Error()
 		return c.Status(500).JSON(response)
 	}
 
 	// endregion
 	// region: response
 
-	response.Meta["rows"] = len(types)
+	response.Meta.Rows = len(types)
 	response.Data = types
 	response.Success = true
 
@@ -76,14 +76,14 @@ func v1_batches_statuses_get(c *fiber.Ctx) error {
 	result := DB.Find(&statuses)
 	if result.Error != nil {
 		Logger(LOG_ERR, "error while fetching batch statuses", result.Error.Error())
-		response.Message = result.Error.Error()
+		response.Data = result.Error.Error()
 		return c.Status(500).JSON(response)
 	}
 
 	// endregion
 	// region: response
 
-	response.Meta["rows"] = len(statuses)
+	response.Meta.Rows = len(statuses)
 	response.Data = statuses
 	response.Success = true
 

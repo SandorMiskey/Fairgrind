@@ -33,7 +33,7 @@ func v1_tasks_post(c *fiber.Ctx) error {
 
 	var tasks []models.ClearingTask
 	if err := c.BodyParser(&tasks); err != nil {
-		response.Message = err.Error()
+		response.Data = err.Error()
 		return c.Status(400).JSON(response)
 	}
 
@@ -50,27 +50,27 @@ func v1_tasks_post(c *fiber.Ctx) error {
 	}()
 
 	if err := tx.Error; err != nil {
-		response.Message = err.Error()
+		response.Data = err.Error()
 		return c.Status(500).JSON(response)
 	}
 
 	result := DB.Create(&tasks)
 	if result.Error != nil {
 		tx.Rollback()
-		response.Message = result.Error.Error()
+		response.Data = result.Error.Error()
 		return c.Status(500).JSON(response)
 	}
 
 	if err := tx.Commit().Error; err != nil {
 		tx.Rollback()
-		response.Message = err.Error()
+		response.Data = err.Error()
 		return c.Status(500).JSON(response)
 	}
 
 	// endregion
 	// region: response
 
-	response.Meta["rows"] = len(tasks)
+	response.Meta.Rows = len(tasks)
 	response.Data = tasks
 	response.Success = true
 
@@ -137,15 +137,15 @@ func v1_tasks_get(c *fiber.Ctx) error {
 	result := DB.Scopes(utils.Paginate(page, size)).Where(&filters).Order(order).Find(&tasks)
 	if result.Error != nil {
 		Logger(LOG_ERR, "error while fetching tasks", result.Error.Error())
-		response.Message = result.Error.Error()
+		response.Data = result.Error.Error()
 		return c.Status(500).JSON(response)
 	}
 
 	// endregion
 	// region: response
 
-	response.Meta["rows"] = len(tasks)
-	response.Meta["count"] = count
+	response.Meta.Rows = len(tasks)
+	response.Meta.Count = count
 	response.Data = tasks
 	response.Success = true
 
@@ -179,7 +179,7 @@ func v1_tasks_fees_delete(c *fiber.Ctx) error {
 
 	fees := new(models.ClearingTaskFee)
 	if err := c.BodyParser(&fees); err != nil {
-		response.Message = err.Error()
+		response.Data = err.Error()
 		return c.Status(400).JSON(response)
 	}
 
@@ -188,7 +188,7 @@ func v1_tasks_fees_delete(c *fiber.Ctx) error {
 
 	result := DB.Delete(&fees)
 	if result.Error != nil {
-		response.Message = result.Error.Error()
+		response.Data = result.Error.Error()
 		return c.Status(500).JSON(response)
 	}
 
@@ -227,12 +227,12 @@ func v1_tasks_fees_get(c *fiber.Ctx) error {
 
 	user_id := uint(c.QueryInt("user_id", 0))
 	if user_id < 1 {
-		response.Message = "invalid user_id"
+		response.Data = "invalid user_id"
 		return c.Status(400).JSON(response)
 	}
 	project_id := uint(c.QueryInt("project_id", 0))
 	if project_id < 1 {
-		response.Message = "invalid project_id"
+		response.Data = "invalid project_id"
 		return c.Status(400).JSON(response)
 	}
 
@@ -243,14 +243,14 @@ func v1_tasks_fees_get(c *fiber.Ctx) error {
 	result := DB.Where(&models.ClearingTaskFee{UserId: user_id, ProjectId: project_id}).Find(&fees)
 	if result.Error != nil {
 		Logger(LOG_ERR, "error while fetching fees for user/project", result.Error.Error())
-		response.Message = result.Error.Error()
+		response.Data = result.Error.Error()
 		return c.Status(500).JSON(response)
 	}
 
 	// endregion
 	// region: response
 
-	response.Meta["rows"] = len(fees)
+	response.Meta.Rows = len(fees)
 	response.Data = fees
 	response.Success = true
 
@@ -284,7 +284,7 @@ func v1_tasks_fees_post(c *fiber.Ctx) error {
 
 	fees := new(models.ClearingTaskFee)
 	if err := c.BodyParser(&fees); err != nil {
-		response.Message = err.Error()
+		response.Data = err.Error()
 		return c.Status(400).JSON(response)
 	}
 
@@ -297,7 +297,7 @@ func v1_tasks_fees_post(c *fiber.Ctx) error {
 
 	result := DB.Create(&fees)
 	if result.Error != nil {
-		response.Message = result.Error.Error()
+		response.Data = result.Error.Error()
 		return c.Status(500).JSON(response)
 	}
 
@@ -338,14 +338,14 @@ func v1_tasks_statuses_get(c *fiber.Ctx) error {
 	result := DB.Find(&statuses)
 	if result.Error != nil {
 		Logger(LOG_ERR, "error while fetching task statuses", result.Error.Error())
-		response.Message = result.Error.Error()
+		response.Data = result.Error.Error()
 		return c.Status(500).JSON(response)
 	}
 
 	// endregion
 	// region: response
 
-	response.Meta["rows"] = len(statuses)
+	response.Meta.Rows = len(statuses)
 	response.Data = statuses
 	response.Success = true
 
@@ -380,14 +380,14 @@ func v1_tasks_types_get(c *fiber.Ctx) error {
 	result := DB.Find(&types)
 	if result.Error != nil {
 		Logger(LOG_ERR, "error while fetching task types", result.Error.Error())
-		response.Message = result.Error.Error()
+		response.Data = result.Error.Error()
 		return c.Status(500).JSON(response)
 	}
 
 	// endregion
 	// region: response
 
-	response.Meta["rows"] = len(types)
+	response.Meta.Rows = len(types)
 	response.Data = types
 	response.Success = true
 
