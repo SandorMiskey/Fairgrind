@@ -83,72 +83,66 @@ func v1_tasks_post(c *fiber.Ctx) error {
 // endregion
 // region: v1_tasks_get
 
-// //	@Summary		get tasks
-// //	@Description	get filtered list of tasks
-// //	@Tags			/tasks
-// //	@Accept			json
-// //	@Produce		json
-// //	@Param			user_id		query		int	true	"user/grinder id"
-// //	@Param			project_id	query		int	true	"project id"
-// //	@Success		200			{object}	models.ApiResponse{data=[]models.ClearingTask}
-// //	@Failure		400			{object}	models.ApiResponse{data=nil}
-// //	@Failure		500			{object}	models.ApiResponse{data=nil}
-// //	@Router			/tasks [get]
-// func v1_tasks_get(c *fiber.Ctx) error {
+// @Summary		get tasks
+// @Description	get filtered list of tasks
+// @Tags			/tasks
+// @Accept			json
+// @Produce		json
+// @Param			batch_id		query		int	false	"batch id"
+// @Param			id				query		int	false	"id"
+// // @Param			project_id		query		int	false	"project id"
+// @Param			task_id			query		int	false	"(parent) task id"
+// @Param			task_status_id	query		int	false	"task status id"
+// @Param			task_type_id	query		int	false	"task type id"
+// @Param			user_id			query		int	false	"user/grinder id"
+// @Success		200				{object}	models.ApiResponse{data=[]models.ClearingTask}
+// @Failure		400				{object}	models.ApiResponse{data=nil}
+// @Failure		500				{object}	models.ApiResponse{data=nil}
+// @Router			/tasks [get]
+func v1_tasks_get(c *fiber.Ctx) error {
 
-// 	// region: output
+	// region: output
 
-// 	response := utils.GetResponse(c)
+	response := utils.GetResponse(c)
 
-// 	// endregion
-// 	// region: input
+	// endregion
+	// region: input
 
-// 	// `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-// 	// `clearing_batch_id` BIGINT UNSIGNED NOT NULL,
-// 	// `clearing_task_id` BIGINT UNSIGNED DEFAULT NULL,
-// 	// `clearing_task_type_id` SMALLINT UNSIGNED NOT NULL,
-// 	// `clearing_task_status_id` SMALLINT UNSIGNED NOT NULL,
-// 	// `user_id` INT(11) NOT NULL,
-// 	// `input` JSON DEFAULT NULL,
-// 	// `output` JSON NOT NULL DEFAULT '[]',
+	filters := &models.ClearingTask{
+		ClearingBatchId:      uint(c.QueryInt("batch_id", 0)),
+		ClearingTaskId:       uint(c.QueryInt("task_id", 0)),
+		ClearingTaskTypeId:   uint(c.QueryInt("task_type_id", 0)),
+		ClearingTaskStatusId: uint(c.QueryInt("task_status_id", 0)),
+		GORM: models.GORM{
+			ID: uint(c.QueryInt("id", 0)),
+		},
+		UserId: uint(c.QueryInt("user_id", 0)),
+	}
+	// Logger(LOG_DEBUG, filters)
 
-// 	user_id := uint(c.QueryInt("user_id", 0))
-// 	if user_id < 1 {
-// 		response.Message = "invalid user_id"
-// 		return c.Status(400).JSON(response)
-// 	}
-// 	project_id := uint(c.QueryInt("project_id", 0))
-// 	if project_id < 1 {
-// 		response.Message = "invalid project_id"
-// 		return c.Status(400).JSON(response)
-// 	}
+	// endregion
+	// region: data
 
-// 	// endregion
-// 	// region: data
+	var tasks []models.ClearingTask
+	result := DB.Where(&filters).Find(&tasks)
+	if result.Error != nil {
+		Logger(LOG_ERR, "error while fetching tasks", result.Error.Error())
+		response.Message = result.Error.Error()
+		return c.Status(500).JSON(response)
+	}
 
-// 	var fees []models.ClearingTaskFee
-// 	result := DB.Where(&models.ClearingTaskFee{UserId: user_id, ProjectId: project_id}).Find(&fees)
-// 	if result.Error != nil {
-// 		Logger(LOG_ERR, "error while fetching fees for user/project", result.Error.Error())
-// 		response.Message = result.Error.Error()
-// 		return c.Status(500).JSON(response)
-// 	}
+	// endregion
+	// region: response
 
-// 	// endregion
-// 	// region: response
+	response.Meta["rows"] = len(tasks)
+	response.Data = tasks
+	response.Success = true
 
-// 	meta := response.Meta.(map[string]string)
-// 	meta["rows"] = strconv.Itoa(len(fees))
+	return c.Status(200).JSON(response)
 
-// 	response.Data = fees
-// 	response.Meta = meta
-// 	response.Success = true
+	// endregion: response
 
-// 	return c.Status(200).JSON(response)
-
-// 	// endregion: response
-
-// }
+}
 
 // endregion
 // region: v1_tasks_fees_delete

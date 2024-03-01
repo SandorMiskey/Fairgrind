@@ -94,7 +94,7 @@ func GetResponse(c *fiber.Ctx) models.ApiResponse {
 	meta := make(models.ApiResponseMeta)
 	meta["queries"] = c.Queries()
 	meta["body_raw"] = c.BodyRaw()
-	meta["req_headers"] = c.GetReqHeaders()
+	// meta["req_headers"] = c.GetReqHeaders()
 
 	return models.ApiResponse{
 		Meta:    meta,

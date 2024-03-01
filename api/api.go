@@ -199,7 +199,7 @@ func main() {
 	// region: tasks
 
 	v1_tasks := v1.Group("/tasks")
-	// v1_tasks.Get("", v1_tasks_get)
+	v1_tasks.Get("", v1_tasks_get)
 	v1_tasks.Post("", v1_tasks_post)
 	v1_tasks.Delete("/fees", v1_tasks_fees_delete)
 	v1_tasks.Get("/fees", v1_tasks_fees_get)
