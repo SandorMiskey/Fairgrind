@@ -88,13 +88,15 @@ func v1_tasks_post(c *fiber.Ctx) error {
 // @Tags			/tasks
 // @Accept			json
 // @Produce		json
-// @Param			batch_id		query		int	false	"batch id"
-// @Param			id				query		int	false	"id"
-// // @Param			project_id		query		int	false	"project id"
-// @Param			task_id			query		int	false	"(parent) task id"
-// @Param			task_status_id	query		int	false	"task status id"
-// @Param			task_type_id	query		int	false	"task type id"
-// @Param			user_id			query		int	false	"user/grinder id"
+// @Param			batch_id		query		int		false	"batch id"
+// @Param			id				query		int		false	"id"
+// @Param			task_id			query		int		false	"(parent) task id"
+// @Param			task_status_id	query		int		false	"task status id"
+// @Param			task_type_id	query		int		false	"task type id"
+// @Param			user_id			query		int		false	"user/grinder id"
+// @Param			order_by		query		string	false	"order by <param> <direction>, as in 'task_status_id asc, task_type_id desc'"
+// @Param			page			query		int		false	"which page"
+// @Param			size			query		int		false	"page size (aka # of results)"
 // @Success		200				{object}	models.ApiResponse{data=[]models.ClearingTask}
 // @Failure		400				{object}	models.ApiResponse{data=nil}
 // @Failure		500				{object}	models.ApiResponse{data=nil}
@@ -109,22 +111,25 @@ func v1_tasks_get(c *fiber.Ctx) error {
 	// region: input
 
 	filters := &models.ClearingTask{
-		ClearingBatchId:      uint(c.QueryInt("batch_id", 0)),
-		ClearingTaskId:       uint(c.QueryInt("task_id", 0)),
-		ClearingTaskTypeId:   uint(c.QueryInt("task_type_id", 0)),
-		ClearingTaskStatusId: uint(c.QueryInt("task_status_id", 0)),
+		ClearingBatchId:      uint(c.QueryInt("clearing_batch_id", 0)),
+		ClearingTaskId:       uint(c.QueryInt("clearing_task_id", 0)),
+		ClearingTaskTypeId:   uint(c.QueryInt("clearing_task_type_id", 0)),
+		ClearingTaskStatusId: uint(c.QueryInt("clearing_task_status_id", 0)),
 		GORM: models.GORM{
 			ID: uint(c.QueryInt("id", 0)),
 		},
 		UserId: uint(c.QueryInt("user_id", 0)),
 	}
-	// Logger(LOG_DEBUG, filters)
+
+	order := c.Query("order_by")
+	page := c.QueryInt("page", 0)
+	size := c.QueryInt("size", 0)
 
 	// endregion
 	// region: data
 
 	var tasks []models.ClearingTask
-	result := DB.Where(&filters).Find(&tasks)
+	result := DB.Scopes(utils.Paginate(page, size)).Where(&filters).Order(order).Find(&tasks)
 	if result.Error != nil {
 		Logger(LOG_ERR, "error while fetching tasks", result.Error.Error())
 		response.Message = result.Error.Error()
