@@ -133,16 +133,16 @@ type ClearingWalletsSummedView struct {
 }
 
 type ClearingWalletsDetailedView struct {
-	ClearingLedgerAmountSum          float64   `json:"amount"`
-	ClearingLedgerUpdatedAtMax       time.Time `json:"updated_at"`
-	ClearingLedgerUserId             uint      `json:"-" form:"user_id"`
-	ClearingLedgerStatusWithdrawable bool      `json:"withdrawable"`
-	ClearingTokenSymbol              string    `json:"symbol"`
+	ClearingLedgerAmountSum          float64   `json:"clearing_ledger_amount_sum"`
+	ClearingLedgerUpdatedAtMax       time.Time `json:"clearing_ledger_updated_at_max"`
+	ClearingLedgerUserId             uint      `json:"clearing_ledger_user_id"`
+	ClearingLedgerStatusWithdrawable bool      `json:"clearing_ledger_status_withdrawable"`
+	ClearingTokenSymbol              string    `json:"clearing_token_symbol"`
 	ClearingLedgerLabelId            uint      `json:"-"`
-	ClearingLedgerLabelLabel         string    `json:"label"`
-	ClearingTaskIdCount              uint      `json:"count"`
+	ClearingLedgerLabelLabel         string    `json:"clearing_ledger_label_label"`
+	ClearingTasksIdCount             uint      `json:"clearing_tasks_id_count"`
 	ProjectId                        uint      `json:"-"`
-	ProjectName                      string    `json:"project"`
+	ProjectName                      string    `json:"project_name"`
 }
 
 // endregion

@@ -7,6 +7,7 @@ import (
 	"utils"
 
 	"github.com/gofiber/fiber/v2"
+	"gorm.io/gorm"
 )
 
 // endregion: packages
@@ -123,18 +124,23 @@ func v1_tasks_get(c *fiber.Ctx) error {
 
 	order := c.Query("orm_order_by")
 	page := c.QueryInt("orm_page", 0)
-	size := c.QueryInt("orm_size", 0)
+	limit := c.QueryInt("orm_limit", 0)
 
 	// endregion
 	// region: data
 
 	var tasks []models.ClearingTask
 	var count int64
+	var result *gorm.DB
 
-	foo := DB.Model(&models.ClearingTask{}).Where(&filters).Order(order).Count(&count)
-	Logger(LOG_DEBUG, foo)
+	result = DB.Model(&models.ClearingTask{}).Where(&filters).Count(&count)
+	if result.Error != nil {
+		Logger(LOG_ERR, "error while counting tasks", result.Error.Error())
+		response.Data = result.Error.Error()
+		return c.Status(500).JSON(response)
+	}
 
-	result := DB.Scopes(utils.Paginate(page, size)).Where(&filters).Order(order).Find(&tasks)
+	result = DB.Scopes(utils.Paginate(page, limit)).Where(&filters).Order(order).Find(&tasks)
 	if result.Error != nil {
 		Logger(LOG_ERR, "error while fetching tasks", result.Error.Error())
 		response.Data = result.Error.Error()
