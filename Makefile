@@ -6,7 +6,7 @@ DOCKER_NETWORK := ${DOCKER_NETWORK}
 ENV := ${PATH_SRC}/.env
 REQUIRED_VARIABLES := PATH_WORKBENCH PATH_BIN PATH_SRC
 
-all: build up run
+all: init up run
 
 build: dep
 	@echo "${GUM_PREFIX}building $(API)"
@@ -59,7 +59,7 @@ init: clean build
 	chmod -x ${PATH_BIN}/init 
 	mv ${PATH_BIN}/init ${PATH_BIN}/init_deactivated
 
-run: up
+run: build up
 	@. $(ENV) && echo "${GUM_PREFIX}go run $(API)"
 	@. $(ENV) && cd $(API) && go run *
 
