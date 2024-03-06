@@ -195,6 +195,14 @@ func main() {
 	v1_ledger.Get("/labels", v1_ledger_labels_get)
 	v1_ledger.Get("/statuses", v1_ledger_statuses_get)
 
+	v1_ledger.Get("", v1_ledger_get)
+	// TODO
+	// * (get)
+	// * credit (post)
+	// * swap (patch)
+	// * withdraw (delete)
+	// * transfer (put)
+
 	// endregion
 	// region: tasks
 

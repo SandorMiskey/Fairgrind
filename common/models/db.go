@@ -8,8 +8,8 @@ import (
 
 type GORM struct {
 	ID        uint           `json:"id" form:"id" gorm:"primaryKey"`
-	CreatedAt time.Time      `json:"-"`
-	UpdatedAt time.Time      `json:"-"`
+	CreatedAt time.Time      `json:"created_at"`
+	UpdatedAt time.Time      `json:"updated_at"`
 	DeletedAt gorm.DeletedAt `json:"-" gorm:"index"`
 }
 
@@ -44,6 +44,21 @@ type ClearingBatch struct {
 
 // endregion
 // region: ledger
+
+type ClearingLedger struct {
+	GORM
+	Amount                 float64 `json:"amount"`
+	ClearingTaskId         uint    `json:"clearing_task_id"`
+	ClearingLedgerStatusId uint    `json:"clearing_ledger_status_id" gorm:"type:SMALLINT UNSIGNED;"`
+	ClearingLedgerLabelId  uint    `json:"clearing_ledger_label_id" gorm:"type:SMALLINT UNSIGNED;"`
+	ClearingTokenId        uint    `json:"clearing_token_id" gorm:"type:MEDIUMINT UNSIGNED;"`
+	Reference              string  `json:"reference"`
+	UserId                 uint    `json:"user_id" gorm:"type:INT(11);"`
+}
+
+func (ClearingLedger) TableName() string {
+	return "clearing_ledger"
+}
 
 type ClearingLedgerStatus struct {
 	GORM
