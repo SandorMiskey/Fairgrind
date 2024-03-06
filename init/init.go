@@ -14,7 +14,6 @@ import (
 	"models"
 	"utils"
 
-	"github.com/joho/godotenv"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -43,10 +42,11 @@ func main() {
 
 	// region: read .env
 
-	env, err := godotenv.Read()
-	if err != nil {
-		utils.Panic(err)
-	}
+	// env, err := godotenv.Read()
+	// if err != nil {
+	// 	utils.Panic(err)
+	// }
+	env := utils.GetEnv()
 
 	// endregion: read .env
 	// region: default action
@@ -59,7 +59,7 @@ func main() {
 	// region: templates
 
 	if Action == "templates" {
-		err = filepath.Walk(env["PATH_TEMPLATES"], func(path string, info os.FileInfo, err error) error {
+		err := filepath.Walk(env["PATH_TEMPLATES"], func(path string, info os.FileInfo, err error) error {
 
 			// region: can I walk here
 
@@ -173,14 +173,19 @@ func main() {
 			utils.Panic(err)
 		}
 
-		// db.AutoMigrate(&models.ClearingBatchType{})
-		// db.AutoMigrate(&models.ClearingBatchStatus{})
-		// db.AutoMigrate(&models.ClearingBatch{})
+		db.AutoMigrate(&models.ClearingBatchType{})
+		db.AutoMigrate(&models.ClearingBatchStatus{})
+		db.AutoMigrate(&models.ClearingBatch{})
+
 		db.AutoMigrate(&models.ClearingLedgerStatus{})
+		db.AutoMigrate(&models.ClearingLedgerLabel{})
+		db.AutoMigrate(&models.ClearingLedger{})
+
 		db.AutoMigrate(&models.ClearingTaskStatus{})
 		db.AutoMigrate(&models.ClearingTaskType{})
 		db.AutoMigrate(&models.ClearingTaskFee{})
-		// db.AutoMigrate(&models.ClearingTask{})
+		db.AutoMigrate(&models.ClearingTask{})
+
 		db.AutoMigrate(&models.ClearingTokenType{})
 		db.AutoMigrate(&models.ClearingToken{})
 	}
