@@ -87,7 +87,7 @@ func v1_wallets_summed_get(c *fiber.Ctx) error {
 // @Param			project_name						query		string	false	"project name"
 // @Param			orm_order_by						query		string	false	"order by field asc/desc, fields are: filter fields plus clearing_ledger_amount_sum, clearing_ledger_updated_at_max and clearing_tasks_id_count"
 // @Param			orm_page							query		int		false	"which page"
-// @Param			orm_size							query		int		false	"page size (aka # of results)"
+// @Param			orm_limit							query		int		false	"page size (aka # of results)"
 // @Success		200									{object}	models.ApiResponse{data=[]models.ClearingWalletsDetailedView}
 // @Failure		400									{object}	models.ApiResponse{}
 // @Failure		500									{object}	models.ApiResponse{}
