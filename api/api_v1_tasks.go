@@ -13,16 +13,16 @@ import (
 // endregion: packages
 // region: v1_tasks_post
 
-//	@Summary		task register
-//	@Description	register task
-//	@Tags			/tasks
-//	@Accept			json
-//	@Produce		json
-//	@Param			request	body		[]models.ClearingTask	true	"json request body, omit 'id' or set to 0, otherwise value will be used, 'input' and 'output' must be valid JSON if supplied"
-//	@Success		200		{object}	models.ApiResponse{data=[]models.ClearingTask}
-//	@Failure		400		{object}	models.ApiResponse{data=nil}
-//	@Failure		500		{object}	models.ApiResponse{data=nil}
-//	@Router			/tasks [post]
+// @Summary		task register
+// @Description	register task
+// @Tags			/tasks
+// @Accept			json
+// @Produce		json
+// @Param			request	body		[]models.ClearingTask	true	"json request body, omit 'id' or set to 0, otherwise value will be used, 'input' and 'output' must be valid JSON if supplied"
+// @Success		200		{object}	models.ApiResponse{data=[]models.ClearingTask}
+// @Failure		400		{object}	models.ApiResponse{data=nil}
+// @Failure		500		{object}	models.ApiResponse{data=nil}
+// @Router			/tasks [post]
 func v1_tasks_post(c *fiber.Ctx) error {
 
 	// region: output
@@ -55,7 +55,7 @@ func v1_tasks_post(c *fiber.Ctx) error {
 		return c.Status(500).JSON(response)
 	}
 
-	result := DB.Create(&tasks)
+	result := tx.Create(&tasks)
 	if result.Error != nil {
 		tx.Rollback()
 		response.Data = result.Error.Error()
@@ -84,24 +84,24 @@ func v1_tasks_post(c *fiber.Ctx) error {
 // endregion
 // region: v1_tasks_get
 
-//	@Summary		get tasks
-//	@Description	get filtered list of tasks
-//	@Tags			/tasks
-//	@Accept			json
-//	@Produce		json
-//	@Param			clearing_batch_id		query		int		false	"batch id"
-//	@Param			id						query		int		false	"id"
-//	@Param			clearing_task_id		query		int		false	"(parent) task id"
-//	@Param			clearing_task_status_id	query		int		false	"task status id"
-//	@Param			clearing_task_type_id	query		int		false	"task type id"
-//	@Param			user_id					query		int		false	"user/grinder id"
-//	@Param			orm_order_by			query		string	false	"order by <param> <direction>, as in 'clearing_task_status_id asc, clearing_task_type_id desc'"
-//	@Param			orm_page				query		int		false	"which page"
-//	@Param			orm_limit				query		int		false	"page size (aka # of results)"
-//	@Success		200						{object}	models.ApiResponse{data=[]models.ClearingTask}
-//	@Failure		400						{object}	models.ApiResponse{data=nil}
-//	@Failure		500						{object}	models.ApiResponse{data=nil}
-//	@Router			/tasks [get]
+// @Summary		get tasks
+// @Description	get filtered list of tasks
+// @Tags			/tasks
+// @Accept			json
+// @Produce		json
+// @Param			clearing_batch_id		query		int		false	"batch id"
+// @Param			id						query		int		false	"id"
+// @Param			clearing_task_id		query		int		false	"(parent) task id"
+// @Param			clearing_task_status_id	query		int		false	"task status id"
+// @Param			clearing_task_type_id	query		int		false	"task type id"
+// @Param			user_id					query		int		false	"user/grinder id"
+// @Param			orm_order_by			query		string	false	"order by <param> <direction>, as in 'clearing_task_status_id asc, clearing_task_type_id desc'"
+// @Param			orm_page				query		int		false	"which page"
+// @Param			orm_limit				query		int		false	"page size (aka # of results)"
+// @Success		200						{object}	models.ApiResponse{data=[]models.ClearingTask}
+// @Failure		400						{object}	models.ApiResponse{data=nil}
+// @Failure		500						{object}	models.ApiResponse{data=nil}
+// @Router			/tasks [get]
 func v1_tasks_get(c *fiber.Ctx) error {
 
 	// region: output
@@ -164,16 +164,16 @@ func v1_tasks_get(c *fiber.Ctx) error {
 // endregion
 // region: v1_tasks_fees_delete
 
-//	@Summary		delete fee
-//	@Description	delete task/subtask fees for user per project
-//	@Tags			/tasks
-//	@Accept			json
-//	@Produce		json
-//	@Param			request	body		models.ClearingTaskFee	true	"json request body, fields not forming part of the composite index are ignored"
-//	@Success		200		{object}	models.ApiResponse{data=nil}
-//	@Failure		400		{object}	models.ApiResponse{data=nil}
-//	@Failure		500		{object}	models.ApiResponse{data=nil}
-//	@Router			/tasks/fees [delete]
+// @Summary		delete fee
+// @Description	delete task/subtask fees for user per project
+// @Tags			/tasks
+// @Accept			json
+// @Produce		json
+// @Param			request	body		models.ClearingTaskFee	true	"json request body, fields not forming part of the composite index are ignored"
+// @Success		200		{object}	models.ApiResponse{data=nil}
+// @Failure		400		{object}	models.ApiResponse{data=nil}
+// @Failure		500		{object}	models.ApiResponse{data=nil}
+// @Router			/tasks/fees [delete]
 func v1_tasks_fees_delete(c *fiber.Ctx) error {
 
 	// region: output
@@ -211,17 +211,17 @@ func v1_tasks_fees_delete(c *fiber.Ctx) error {
 // endregion
 // region: v1_tasks_fees_get
 
-//	@Summary		get fees
-//	@Description	get task/subtask fees per user per project
-//	@Tags			/tasks
-//	@Accept			json
-//	@Produce		json
-//	@Param			user_id		query		int	true	"user/grinder id"
-//	@Param			project_id	query		int	true	"project id"
-//	@Success		200			{object}	models.ApiResponse{data=[]models.ClearingTaskFee}
-//	@Failure		400			{object}	models.ApiResponse{data=nil}
-//	@Failure		500			{object}	models.ApiResponse{data=nil}
-//	@Router			/tasks/fees [get]
+// @Summary		get fees
+// @Description	get task/subtask fees per user per project
+// @Tags			/tasks
+// @Accept			json
+// @Produce		json
+// @Param			user_id		query		int	true	"user/grinder id"
+// @Param			project_id	query		int	true	"project id"
+// @Success		200			{object}	models.ApiResponse{data=[]models.ClearingTaskFee}
+// @Failure		400			{object}	models.ApiResponse{data=nil}
+// @Failure		500			{object}	models.ApiResponse{data=nil}
+// @Router			/tasks/fees [get]
 func v1_tasks_fees_get(c *fiber.Ctx) error {
 
 	// region: output
@@ -269,16 +269,16 @@ func v1_tasks_fees_get(c *fiber.Ctx) error {
 // endregion
 // region: v1_tasks_fees_post
 
-//	@Summary		set fees
-//	@Description	set task/subtask fees for user per project
-//	@Tags			/tasks
-//	@Accept			json
-//	@Produce		json
-//	@Param			request	body		models.ClearingTaskFee	true	"json request body"
-//	@Success		200		{object}	models.ApiResponse{data=[]models.ClearingTaskFee}
-//	@Failure		400		{object}	models.ApiResponse{data=nil}
-//	@Failure		500		{object}	models.ApiResponse{data=nil}
-//	@Router			/tasks/fees [post]
+// @Summary		set fees
+// @Description	set task/subtask fees for user per project
+// @Tags			/tasks
+// @Accept			json
+// @Produce		json
+// @Param			request	body		models.ClearingTaskFee	true	"json request body"
+// @Success		200		{object}	models.ApiResponse{data=[]models.ClearingTaskFee}
+// @Failure		400		{object}	models.ApiResponse{data=nil}
+// @Failure		500		{object}	models.ApiResponse{data=nil}
+// @Router			/tasks/fees [post]
 func v1_tasks_fees_post(c *fiber.Ctx) error {
 
 	// region: output
@@ -322,15 +322,15 @@ func v1_tasks_fees_post(c *fiber.Ctx) error {
 // endregion
 // region: v1_tasks_statuses_get
 
-//	@Summary		task statuses
-//	@Description	get list of possible task statuses
-//	@Tags			/tasks
-//	@Accept			json
-//	@Produce		json
-//	@Success		200	{object}	models.ApiResponse{data=[]models.ClearingTaskStatus}
-//	@Failure		400	{object}	models.ApiResponse{data=nil}
-//	@Failure		500	{object}	models.ApiResponse{data=nil}
-//	@Router			/tasks/statuses [get]
+// @Summary		task statuses
+// @Description	get list of possible task statuses
+// @Tags			/tasks
+// @Accept			json
+// @Produce		json
+// @Success		200	{object}	models.ApiResponse{data=[]models.ClearingTaskStatus}
+// @Failure		400	{object}	models.ApiResponse{data=nil}
+// @Failure		500	{object}	models.ApiResponse{data=nil}
+// @Router			/tasks/statuses [get]
 func v1_tasks_statuses_get(c *fiber.Ctx) error {
 
 	// region: output
@@ -364,15 +364,15 @@ func v1_tasks_statuses_get(c *fiber.Ctx) error {
 // endregion
 // region: v1_tasks_types_get
 
-//	@Summary		task types
-//	@Description	get list of possible task types
-//	@Tags			/tasks
-//	@Accept			json
-//	@Produce		json
-//	@Success		200	{object}	models.ApiResponse{data=[]models.ClearingTaskType}
-//	@Failure		400	{object}	models.ApiResponse{data=nil}
-//	@Failure		500	{object}	models.ApiResponse{data=nil}
-//	@Router			/tasks/types [get]
+// @Summary		task types
+// @Description	get list of possible task types
+// @Tags			/tasks
+// @Accept			json
+// @Produce		json
+// @Success		200	{object}	models.ApiResponse{data=[]models.ClearingTaskType}
+// @Failure		400	{object}	models.ApiResponse{data=nil}
+// @Failure		500	{object}	models.ApiResponse{data=nil}
+// @Router			/tasks/types [get]
 func v1_tasks_types_get(c *fiber.Ctx) error {
 
 	// region: output

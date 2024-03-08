@@ -145,6 +145,7 @@ type ClearingWalletsSummedView struct {
 	ClearingLedgerUserId             uint      `json:"-" form:"user_id"`
 	ClearingLedgerStatusWithdrawable bool      `json:"withdrawable"`
 	ClearingTokenSymbol              string    `json:"token_symbol"`
+	ClearingTokenId                  uint      `json:"-"`
 }
 
 type ClearingWalletsDetailedView struct {
