@@ -200,7 +200,6 @@ func main() {
 	// TODO
 	// * credit (post)
 	// * swap (patch)
-	// * withdraw (delete)
 	// * transfer (put)
 
 	// endregion
