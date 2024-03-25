@@ -4,6 +4,8 @@
 
 ## NEXT
 
+* gorm -> sqlx ???
+
 ## BACKLOG
 
 * fiber

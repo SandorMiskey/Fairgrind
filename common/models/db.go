@@ -52,7 +52,7 @@ type ClearingLedger struct {
 	ClearingLedgerStatusId uint    `json:"clearing_ledger_status_id" gorm:"type:SMALLINT UNSIGNED;"`
 	ClearingLedgerLabelId  uint    `json:"clearing_ledger_label_id" gorm:"type:SMALLINT UNSIGNED;"`
 	ClearingTokenId        uint    `json:"clearing_token_id" gorm:"type:MEDIUMINT UNSIGNED;"`
-	Reference              string  `json:"reference"`
+	Reference              string  `json:"reference" maxLength:"1024"`
 	UserId                 uint    `json:"user_id" gorm:"type:INT(11);"`
 }
 

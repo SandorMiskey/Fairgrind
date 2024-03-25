@@ -192,11 +192,11 @@ func main() {
 	// region: ledger
 
 	v1_ledger := v1.Group("/ledger")
+	v1_ledger.Get("", v1_ledger_get)
 	v1_ledger.Get("/labels", v1_ledger_labels_get)
 	v1_ledger.Get("/statuses", v1_ledger_statuses_get)
-
-	v1_ledger.Get("", v1_ledger_get)
-	v1_ledger.Delete("", v1_ledger_delete)
+	v1_ledger.Delete("", v1_ledger_withdraw_post)
+	v1_ledger.Post("/withdraw", v1_ledger_withdraw_post)
 	// TODO
 	// * credit (post)
 	// * swap (patch)
