@@ -103,13 +103,15 @@ func main() {
 	// endregion
 	// region: redis
 
-	Cache = redis.NewClient(&redis.Options{
-		Addr:     Env[ENV_CACHE_HOST],
-		Password: Env[ENV_CACHE_PASSWORD],
-		DB:       0,
-		Protocol: 3,
-	})
-	Logger(LOG_DEBUG, Cache)
+	/*
+		Cache = redis.NewClient(&redis.Options{
+			Addr:     Env[ENV_CACHE_HOST],
+			Password: Env[ENV_CACHE_PASSWORD],
+			DB:       0,
+			Protocol: 3,
+		})
+		Logger(LOG_DEBUG, Cache)
+	*/
 
 	// endregion: redis
 	// region: fiber
