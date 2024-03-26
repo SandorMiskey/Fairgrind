@@ -22,7 +22,7 @@ services:
       - {{.ADMINER_PORT}}:8080
     restart: always
   {{.API_NAME}}:
-    command: /app/api-linux
+    command: /app/{{.API_NAME}}
     depends_on:
       - {{.DB_NAME}}
     environment:
@@ -59,8 +59,38 @@ services:
       - {{.API_PORT}}:{{.API_PORT}}
     restart: always
     volumes:
-      - {{.PATH_BIN}}:/app
+      - {{.PATH_BIN}}/{{.API_NAME}}-linux:/app/{{.API_NAME}}
       - {{.PATH_WORKBENCH}}/{{.API_SWAGGER_FILEPATH}}:/app/{{.API_SWAGGER_FILEPATH}}
+    working_dir: /app
+  {{.CLR_NAME}}:
+    command: /app/{{.CLR_NAME}}
+    depends_on:
+      - {{.MQ_NAME}}
+      - {{.API_NAME}}
+    environment:
+      CLR_API_KEY: {{.CLR_API_KEY}}
+      CLR_LOG_PREFIX: "{{.CLR_LOG_PREFIX}}"
+      CLR_LOG_SEVERITY: {{.CLR_LOG_SEVERITY}}
+      CLR_MQ_EXCHANGE: {{.CLR_MQ_EXCHANGE}}
+      CLR_MQ_HOST: {{.CLR_MQ_HOST}}
+      CLR_MQ_PASSWORD: {{.CLR_MQ_PASSWORD}}
+      CLR_MQ_PORT: {{.CLR_MQ_PORT}}
+      CLR_MQ_ROUTING: {{.CLR_MQ_ROUTING}}
+      CLR_MQ_QUEUE: {{.CLR_MQ_QUEUE}}
+      CLR_MQ_USER: {{.CLR_MQ_USER}}
+      # make passwords secrets
+    hostname: {{.CLR_NAME}}
+    image: {{.CLR_IMAGE}}
+    labels:
+      service: {{.CLR_NAME}}
+    networks:
+      {{.DOCKER_NETWORK}}:
+        # ipv4_address: 10.96.0.4
+        aliases:
+          - {{.CLR_NAME}}
+    restart: always
+    volumes:
+      - {{.PATH_BIN}}/{{.CLR_NAME}}-linux:/app/{{.CLR_NAME}}
     working_dir: /app
   {{.DB_NAME}}:
     environment:

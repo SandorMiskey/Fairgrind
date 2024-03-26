@@ -13,7 +13,7 @@ import (
 	// "models"
 
 	// 3rd party
-	"github.com/joho/godotenv"
+
 	amqp "github.com/rabbitmq/amqp091-go"
 	// "github.com/redis/go-redis/v9"
 	// "gorm.io/driver/mysql"
@@ -24,12 +24,9 @@ import (
 // region: globals
 
 var (
-	err error
-
 	Env map[string]string
 	// DB    *gorm.DB
 	// Cache *redis.Client
-
 	// CacheMutex = sync.RWMutex{}
 )
 
@@ -66,8 +63,9 @@ func main() {
 
 	// region: read .env
 
-	Env, err = godotenv.Read()
-	utils.Panic(err)
+	// Env, err = godotenv.Read()
+	// utils.Panic(err)
+	Env = utils.GetEnv()
 
 	// endregion: read .env
 	// region: logger
