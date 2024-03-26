@@ -22,7 +22,7 @@ services:
       - {{.ADMINER_PORT}}:8080
     restart: always
   {{.API_NAME}}:
-    command: /app/bin/api-linux
+    command: /app/api-linux
     depends_on:
       - {{.DB_NAME}}
     environment:
@@ -59,7 +59,9 @@ services:
       - {{.API_PORT}}:{{.API_PORT}}
     restart: always
     volumes:
-      - {{.PATH_BIN}}:/app/bin
+      - {{.PATH_BIN}}:/app
+      - {{.PATH_WORKBENCH}}/{{.API_SWAGGER_FILEPATH}}:/app/{{.API_SWAGGER_FILEPATH}}
+    working_dir: /app
   {{.DB_NAME}}:
     environment:
       # - MARIADB_ROOT_PASSWORD=example

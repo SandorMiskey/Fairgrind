@@ -1,10 +1,10 @@
 .DEFAULT_GOAL := build
 API := ${API_NAME}
-CLEARING := clearing
+CLEARING := ${CLR_NAME}
 DOCKER_COMPOSE := ${DOCKER_COMPOSE}
 DOCKER_NETWORK := ${DOCKER_NETWORK}
 ENV := ${PATH_SRC}/.env
-REQUIRED_VARIABLES := PATH_WORKBENCH PATH_BIN PATH_SRC
+REQUIRED_VARIABLES := API_SWAGGER_DIRPATH PATH_BIN PATH_SRC PATH_WORKBENCH
 
 all: init up run
 
@@ -21,6 +21,7 @@ build: dep
 	@cd $(CLEARING) && go mod tidy
 	@. $(ENV) && cd $(API) && GOOS="" go build -o ${PATH_BIN}/$(CLEARING)-native
 	@. $(ENV) && cd $(API) && GOOS="linux" go build -o ${PATH_BIN}/$(CLEARING)-linux
+	@. $(ENV) && cp -r $(API)/${API_SWAGGER_DIRPATH} ${PATH_WORKBENCH}
 
 	@echo "${GUM_PREFIX}building init"
 	@cd init && go mod tidy
@@ -28,8 +29,8 @@ build: dep
 
 clean: dep down
 	@. $(ENV) && gum style 'THIS TARGET CAN BE DESTRUCTIVE' 'IT SHOULD BE RUN WITH SPECIAL CARE'
-	@. $(ENV) && gum confirm "do you want to proceed?" || exit 1
-	@. $(ENV) && gum confirm "is PATH_WORKBENCH == ${PATH_WORKBENCH} correct?" && gum spin --title "removing ${PATH_WORKBENCH}/*" -- find "${PATH_WORKBENCH}" -mindepth 1 -delete || exit 1
+	@. $(ENV) && gum confirm "${GUM_PREFIX}do you want to proceed?" || exit 1
+	@. $(ENV) && gum confirm "${GUM_PREFIX}is PATH_WORKBENCH == ${PATH_WORKBENCH} correct?" && gum spin --title "removing ${PATH_WORKBENCH}/*" -- find "${PATH_WORKBENCH}" -mindepth 1 -delete || exit 1
 	@. $(ENV) && echo "${GUM_PREFIX}${PATH_WORKBENCH} is clean"
 
 dep:
@@ -58,16 +59,15 @@ init: clean build
 	@. $(ENV) && echo "${GUM_PREFIX}deactivating ${PATH_BIN}/init"
 	chmod -x ${PATH_BIN}/init 
 	mv ${PATH_BIN}/init ${PATH_BIN}/init_deactivated
-# run: build up
-# 	@. $(ENV) && echo "${GUM_PREFIX}go run $(API)"
-# 	@. $(ENV) && cd $(API) && go run *
+
 up: up_infra up_services
 up_infra: dep
 	@. $(ENV) && echo "${GUM_PREFIX}$(DOCKER_COMPOSE) up infra"
 	-docker network create $(DOCKER_NETWORK)
 	@##### $(DOCKER_COMPOSE) -f ${PATH_WORKBENCH}/docker-compose.yaml -p $(DOCKER_NETWORK) up -d
 	$(DOCKER_COMPOSE) -f ${PATH_WORKBENCH}/docker-compose.yaml -p $(DOCKER_NETWORK) up -d ${ADMINER_NAME} ${CDC_NAME} ${DB_NAME} ${MQ_NAME}
-up_services: dep build
+
+up_services: build up_infra
 	@. $(ENV) && echo "${GUM_PREFIX}$(DOCKER_COMPOSE) up services"
 	-docker network create $(DOCKER_NETWORK)
 	$(DOCKER_COMPOSE) -f ${PATH_WORKBENCH}/docker-compose.yaml -p $(DOCKER_NETWORK) up -d ${API_NAME}
