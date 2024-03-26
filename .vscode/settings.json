@@ -27,6 +27,7 @@
     "requestid",
     "SMALLINT",
     "Solana",
+    "sqlx",
     "suser",
     "Tabler",
     "TIMEFORMAT"

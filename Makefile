@@ -1,5 +1,5 @@
 .DEFAULT_GOAL := build
-API := api
+API := ${API_NAME}
 CLEARING := clearing
 DOCKER_COMPOSE := ${DOCKER_COMPOSE}
 DOCKER_NETWORK := ${DOCKER_NETWORK}
@@ -51,19 +51,23 @@ down:
 init: clean build
 	@. $(ENV) && echo "${GUM_PREFIX}executing ${PATH_BIN}/init templates"
 	@. $(ENV) && ${PATH_BIN}/init
-	-$(MAKE) up
+	-$(MAKE) up_infra
 	@. $(ENV) && echo "${GUM_PREFIX}executing ${PATH_BIN}/init gorm"
 	@. $(ENV) && gum spin --title "waiting for services for ${DB_INIT_TIMEOUT}s..." -- sleep ${DB_INIT_TIMEOUT}
 	@. $(ENV) && ${PATH_BIN}/init gorm
 	@. $(ENV) && echo "${GUM_PREFIX}deactivating ${PATH_BIN}/init"
 	chmod -x ${PATH_BIN}/init 
 	mv ${PATH_BIN}/init ${PATH_BIN}/init_deactivated
-
-run: build up
-	@. $(ENV) && echo "${GUM_PREFIX}go run $(API)"
-	@. $(ENV) && cd $(API) && go run *
-
-up: dep
-	@. $(ENV) && echo "${GUM_PREFIX}$(DOCKER_COMPOSE) up"
+# run: build up
+# 	@. $(ENV) && echo "${GUM_PREFIX}go run $(API)"
+# 	@. $(ENV) && cd $(API) && go run *
+up: up_infra up_services
+up_infra: dep
+	@. $(ENV) && echo "${GUM_PREFIX}$(DOCKER_COMPOSE) up infra"
 	-docker network create $(DOCKER_NETWORK)
-	$(DOCKER_COMPOSE) -f ${PATH_WORKBENCH}/docker-compose.yaml -p $(DOCKER_NETWORK) up -d
+	@##### $(DOCKER_COMPOSE) -f ${PATH_WORKBENCH}/docker-compose.yaml -p $(DOCKER_NETWORK) up -d
+	$(DOCKER_COMPOSE) -f ${PATH_WORKBENCH}/docker-compose.yaml -p $(DOCKER_NETWORK) up -d ${ADMINER_NAME} ${CDC_NAME} ${DB_NAME} ${MQ_NAME}
+up_services: dep build
+	@. $(ENV) && echo "${GUM_PREFIX}$(DOCKER_COMPOSE) up services"
+	-docker network create $(DOCKER_NETWORK)
+	$(DOCKER_COMPOSE) -f ${PATH_WORKBENCH}/docker-compose.yaml -p $(DOCKER_NETWORK) up -d ${API_NAME}
