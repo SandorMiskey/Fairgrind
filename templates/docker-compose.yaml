@@ -6,6 +6,60 @@ networks:
     # name: {{.DOCKER_NETWORK}}
 
 services:
+  {{.ADMINER_NAME}}:
+    depends_on:
+      - {{.DB_NAME}}
+    hostname: {{.ADMINER_NAME}}
+    image: {{.ADMINER_IMAGE}}
+    labels:
+      service: {{.ADMINER_NAME}}
+    networks:
+      {{.DOCKER_NETWORK}}:
+        # ipv4_address: 10.96.0.4
+        aliases:
+          - {{.ADMINER_NAME}}
+    ports:
+      - {{.ADMINER_PORT}}:8080
+    restart: always
+  {{.API_NAME}}:
+    command: /app/bin/api-linux
+    depends_on:
+      - {{.DB_NAME}}
+    environment:
+      API_KEY: {{.API_KEY}}
+      API_LOG_PREFIX: '{{.API_LOG_PREFIX}}'
+      API_LOG_SEVERITY: {{.API_LOG_SEVERITY}}
+      API_FIBER_ADDRESS: {{.API_FIBER_ADDRESS}}
+      API_FIBER_LOGFORMAT: "{{.API_FIBER_LOGFORMAT}}"
+      API_FIBER_TIMEFORMAT: "{{.API_FIBER_TIMEFORMAT}}"
+      API_FIBER_METRICS: {{.API_FIBER_METRICS}}
+      API_CACHE_PASSWORD: {{.API_CACHE_PASSWORD}}
+      API_CACHE_HOST: {{.API_CACHE_HOST}}
+      API_DB_HOST: {{.DB_NAME}}
+      API_DB_PORT: {{.API_DB_PORT}}
+      API_DB_PARAMS: {{.API_DB_PARAMS}}
+      API_DB_SCHEMA: {{.API_DB_SCHEMA}}
+      API_DB_USER: {{.API_DB_USER}}
+      API_DB_PASSWORD: {{.API_DB_PASSWORD}}
+      API_SWAGGER_BASEPATH: {{.API_SWAGGER_BASEPATH}}
+      API_SWAGGER_FILEPATH: {{.API_SWAGGER_FILEPATH}}
+      API_SWAGGER_PATH: {{.API_SWAGGER_PATH}}
+      API_SWAGGER_TITLE: "{{.API_SWAGGER_TITLE}}"
+      # make passwords secrets
+    hostname: {{.API_NAME}}
+    image: {{.API_IMAGE}}
+    labels:
+      service: {{.API_NAME}}
+    networks:
+      {{.DOCKER_NETWORK}}:
+        # ipv4_address: 10.96.0.4
+        aliases:
+          - {{.API_NAME}}
+    ports:
+      - {{.API_PORT}}:{{.API_PORT}}
+    restart: always
+    volumes:
+      - {{.PATH_BIN}}:/app/bin
   {{.DB_NAME}}:
     environment:
       # - MARIADB_ROOT_PASSWORD=example
@@ -27,42 +81,6 @@ services:
       - {{.PATH_WORKBENCH}}/db/etc:/etc/mysql
       - {{.PATH_WORKBENCH}}/db/data:/var/lib/mysql
       - {{.PATH_WORKBENCH}}/db/init:/docker-entrypoint-initdb.d
-  {{.ADMINER_NAME}}:
-    depends_on:
-      - {{.DB_NAME}}
-    hostname: {{.ADMINER_NAME}}
-    image: {{.ADMINER_IMAGE}}
-    labels:
-      service: {{.ADMINER_NAME}}
-    networks:
-      {{.DOCKER_NETWORK}}:
-        # ipv4_address: 10.96.0.4
-        aliases:
-          - {{.ADMINER_NAME}}
-    ports:
-      - {{.ADMINER_PORT}}:8080
-    restart: always
-  {{.MQ_NAME}}:
-    environment:
-      - RABBITMQ_DEFAULT_USER={{.MQ_USER}}
-      - RABBITMQ_DEFAULT_PASS={{.MQ_PASSWORD}}
-    hostname: {{.MQ_NAME}}
-    image: {{.MQ_IMG}}
-    labels:
-      service: {{.MQ_NAME}}
-    networks:
-      {{.DOCKER_NETWORK}}:
-        # ipv4_address: 10.96.0.5
-        aliases:
-          - {{.MQ_NAME}}
-          - {{.MQ_FQDN}}
-    ports:
-      - {{.MQ_PORT_MQ}}:5672
-      - {{.MQ_PORT_MGMT}}:15672
-    restart: always
-    volumes:
-      - {{.PATH_WORKBENCH}}/mq/etc:/etc/rabbitmq/
-      - {{.PATH_WORKBENCH}}/mq/data:/var/lib/rabbitmq
   {{.CACHE_NAME}}:
     hostname: {{.CACHE_NAME}}
     image: {{.CACHE_IMG}}
@@ -89,7 +107,7 @@ services:
     depends_on:
       - {{.DB_NAME}}
       - {{.MQ_NAME}}
-      - {{.CACHE_NAME}}
+      # - {{.CACHE_NAME}}
     hostname: {{.CDC_NAME}}
     image: {{.CDC_IMAGE}}
     labels:
@@ -103,3 +121,24 @@ services:
     restart: always
     volumes:
       - {{.PATH_WORKBENCH}}/cdc/config.properties:/app/config.properties
+  {{.MQ_NAME}}:
+    environment:
+      - RABBITMQ_DEFAULT_USER={{.MQ_USER}}
+      - RABBITMQ_DEFAULT_PASS={{.MQ_PASSWORD}}
+    hostname: {{.MQ_NAME}}
+    image: {{.MQ_IMG}}
+    labels:
+      service: {{.MQ_NAME}}
+    networks:
+      {{.DOCKER_NETWORK}}:
+        # ipv4_address: 10.96.0.5
+        aliases:
+          - {{.MQ_NAME}}
+          - {{.MQ_FQDN}}
+    ports:
+      - {{.MQ_PORT_MQ}}:5672
+      - {{.MQ_PORT_MGMT}}:15672
+    restart: always
+    volumes:
+      - {{.PATH_WORKBENCH}}/mq/etc:/etc/rabbitmq/
+      - {{.PATH_WORKBENCH}}/mq/data:/var/lib/rabbitmq

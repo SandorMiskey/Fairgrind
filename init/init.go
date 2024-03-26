@@ -4,12 +4,12 @@ package main
 
 import (
 	"fmt"
-	"html/template"
 	"io"
 	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
+	"text/template"
 
 	"models"
 	"utils"
