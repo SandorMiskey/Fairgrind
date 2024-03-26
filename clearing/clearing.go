@@ -5,7 +5,6 @@ package main
 import (
 	// standard
 	"encoding/json"
-	"fmt"
 	"log/syslog"
 	"models"
 
@@ -16,15 +15,9 @@ import (
 	// 3rd party
 	"github.com/joho/godotenv"
 	amqp "github.com/rabbitmq/amqp091-go"
-	"github.com/redis/go-redis/v9"
-	"gorm.io/driver/mysql"
-	"gorm.io/gorm"
-	// "github.com/gofiber/fiber/v2"
-	// "github.com/gofiber/fiber/v2/log"
-	// "github.com/gofiber/fiber/v2/middleware/cors"
-	// "github.com/gofiber/fiber/v2/middleware/logger"
-	// "github.com/gofiber/fiber/v2/middleware/recover"
-	// "github.com/gofiber/fiber/v2/middleware/requestid"
+	// "github.com/redis/go-redis/v9"
+	// "gorm.io/driver/mysql"
+	// "gorm.io/gorm"
 )
 
 // endregion: packages
@@ -33,9 +26,9 @@ import (
 var (
 	err error
 
-	DB    *gorm.DB
-	Env   map[string]string
-	Cache *redis.Client
+	Env map[string]string
+	// DB    *gorm.DB
+	// Cache *redis.Client
 
 	// CacheMutex = sync.RWMutex{}
 )
@@ -87,39 +80,44 @@ func main() {
 	// region: db
 
 	// TODO: use "database/sql" for connection pool and fine tunning
+	// TODO: use "sqlx" for better query handling
 
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?%s", Env[ENV_DB_USER], Env[ENV_DB_PASSWORD], Env[ENV_DB_HOST], Env[ENV_DB_PORT], Env[ENV_DB_SCHEMA], Env[ENV_DB_PARAMS])
-	logger(LOG_DEBUG, dsn)
-	DB, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
-	utils.Panic(err)
+	/*
+		dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?%s", Env[ENV_DB_USER], Env[ENV_DB_PASSWORD], Env[ENV_DB_HOST], Env[ENV_DB_PORT], Env[ENV_DB_SCHEMA], Env[ENV_DB_PARAMS])
+		logger(LOG_DEBUG, dsn)
+		DB, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
+		utils.Panic(err)
 
-	// err = DB.SetupJoinTable(&models.Project{}, "Grinders", &models.ProjectGrinder{})
-	// 	panic(err)
+		// err = DB.SetupJoinTable(&models.Project{}, "Grinders", &models.ProjectGrinder{})
+		// 	panic(err)
+	*/
 
 	// endregion
 	// region: redis
 
-	Cache = redis.NewClient(&redis.Options{
-		Addr:     Env[ENV_CACHE_HOST],
-		Password: Env[ENV_CACHE_PASSWORD],
-		DB:       0,
-		Protocol: 3,
-	})
-	logger(LOG_DEBUG, Cache)
+	/*
+		Cache = redis.NewClient(&redis.Options{
+			Addr:     Env[ENV_CACHE_HOST],
+			Password: Env[ENV_CACHE_PASSWORD],
+			DB:       0,
+			Protocol: 3,
+		})
+		logger(LOG_DEBUG, Cache)
 
-	// cacheCtx := context.Background()
-	// err = Cache.Set(cacheCtx, "key", "value", 0).Err()
-	// if err != nil {
-	// 	panic(err)
-	// }
-	// val, err := Cache.Get(cacheCtx, "key").Result()
-	// if err == redis.Nil {
-	// 	fmt.Println("key2 does not exist")
-	// } else if err != nil {
-	// 	utils.Panic(err)
-	// } else {
-	// 	fmt.Println("key", val)
-	// }
+		// cacheCtx := context.Background()
+		// err = Cache.Set(cacheCtx, "key", "value", 0).Err()
+		// if err != nil {
+		// 	panic(err)
+		// }
+		// val, err := Cache.Get(cacheCtx, "key").Result()
+		// if err == redis.Nil {
+		// 	fmt.Println("key2 does not exist")
+		// } else if err != nil {
+		// 	utils.Panic(err)
+		// } else {
+		// 	fmt.Println("key", val)
+		// }
+	*/
 
 	// endregion: redis
 	// region: mq
@@ -175,6 +173,7 @@ func main() {
 	utils.Panic(err, "failed to register a consumer")
 
 	// endregion
+	// region: forever
 
 	var forever chan struct{}
 
@@ -229,5 +228,7 @@ func main() {
 
 	logger(LOG_INFO, "waiting forever")
 	<-forever
+
+	// endregion: forever
 
 }
