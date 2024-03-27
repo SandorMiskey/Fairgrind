@@ -23,6 +23,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/monitor"
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/gofiber/fiber/v2/middleware/requestid"
+	"github.com/jmoiron/sqlx"
 	"github.com/redis/go-redis/v9"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -35,6 +36,7 @@ var (
 	err error
 
 	DB     *gorm.DB
+	DBX    *sqlx.DB
 	Env    map[string]string
 	Cache  *redis.Client
 	Logger func(s ...interface{}) *[]error
@@ -97,8 +99,14 @@ func main() {
 
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?%s", Env[ENV_DB_USER], Env[ENV_DB_PASSWORD], Env[ENV_DB_HOST], Env[ENV_DB_PORT], Env[ENV_DB_SCHEMA], Env[ENV_DB_PARAMS])
 	Logger(LOG_DEBUG, dsn)
+
 	DB, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	utils.Panic(err)
+	Logger(LOG_DEBUG, DB)
+
+	DBX, err = sqlx.Connect("mysql", dsn)
+	utils.Panic(err)
+	Logger(LOG_DEBUG, DBX)
 
 	// endregion
 	// region: redis

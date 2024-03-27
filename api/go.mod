@@ -11,6 +11,7 @@ replace mq => ../common/mq
 require (
 	github.com/gofiber/contrib/swagger v1.1.1
 	github.com/gofiber/fiber/v2 v2.52.0
+	github.com/jmoiron/sqlx v1.3.5
 	github.com/redis/go-redis/v9 v9.4.0
 	github.com/swaggo/swag v1.16.3
 	gorm.io/driver/mysql v1.5.2
