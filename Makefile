@@ -50,8 +50,8 @@ init: clean build_init
 	@. $(ENV) && ${PATH_BIN}/init
 	-$(MAKE) up_infra
 	@. $(ENV) && echo "${GUM_PREFIX}executing ${PATH_BIN}/init gorm"
-	@. $(ENV) && gum spin --title "waiting for services for ${DB_INIT_TIMEOUT}s..." -- sleep ${DB_INIT_TIMEOUT}
-	@. $(ENV) && ${PATH_BIN}/init gorm
+	@# . $(ENV) && gum spin --title "waiting for services for ${DB_INIT_TIMEOUT}s..." -- sleep ${DB_INIT_TIMEOUT}
+	@# . $(ENV) && ${PATH_BIN}/init gorm
 	@. $(ENV) && echo "${GUM_PREFIX}deactivating ${PATH_BIN}/init"
 	chmod -x ${PATH_BIN}/init 
 	mv ${PATH_BIN}/init ${PATH_BIN}/init_deactivated
