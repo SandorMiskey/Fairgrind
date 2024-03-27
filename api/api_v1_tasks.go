@@ -37,6 +37,7 @@ func v1_tasks_post(c *fiber.Ctx) error {
 		response.Data = err.Error()
 		return c.Status(400).JSON(response)
 	}
+	Logger(LOG_DEBUG, tasks)
 
 	// TODO: validation
 
@@ -121,6 +122,7 @@ func v1_tasks_get(c *fiber.Ctx) error {
 		},
 		UserId: uint(c.QueryInt("user_id", 0)),
 	}
+	Logger(LOG_DEBUG, filters)
 
 	order := c.Query("orm_order_by")
 	page := c.QueryInt("orm_page", 0)

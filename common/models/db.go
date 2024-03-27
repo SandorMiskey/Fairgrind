@@ -108,7 +108,7 @@ type ClearingTaskFee struct {
 type ClearingTask struct {
 	GORM
 	ClearingBatchId      uint    `json:"clearing_batch_id"`
-	ClearingTaskId       uint    `json:"clearing_task_id,omitempty"`
+	ClearingTaskId       uint    `json:"clearing_task_id,omitempty" gorm:"default:NULL;"`
 	ClearingTaskTypeId   uint    `json:"clearing_task_type_id" gorm:"type:SMALLINT UNSIGNED;"`
 	ClearingTaskStatusId uint    `json:"clearing_task_status_id" gorm:"type:SMALLINT UNSIGNED;"`
 	UserId               uint    `json:"user_id" gorm:"type:INT(11);"`
