@@ -90,9 +90,15 @@ CREATE TABLE `fairgrind`.`clearing_tasks` (
   `clearing_task_id` BIGINT UNSIGNED DEFAULT NULL, 
   `clearing_task_type_id` SMALLINT UNSIGNED NOT NULL,
   `clearing_task_status_id` SMALLINT UNSIGNED NOT NULL,
+  -- `input` JSON DEFAULT NULL,
+  -- `output` JSON NOT NULL DEFAULT '[]',
+  `output` JSON DEFAULT NULL, 
+  `task_id` INT(11) NOT NULL,
   `user_id` INT(11) NOT NULL,
-  `input` JSON DEFAULT NULL,
-  `output` JSON NOT NULL DEFAULT '[]',
+  `task_reject_issues_id` INT(11) DEFAULT NULL,
+  `reference` MEDIUMTEXT DEFAULT NULL,
+  `started_at` DATETIME(3) DEFAULT NULL,
+  `finished_at` DATETIME(3) DEFAULT NULL,
 	`cleared_at` DATETIME(3) DEFAULT NULL,
   `created_at` DATETIME(3) NOT NULL DEFAULT current_timestamp(),
   `updated_at` DATETIME(3) DEFAULT current_timestamp() ON UPDATE current_timestamp(),
@@ -103,11 +109,18 @@ CREATE TABLE `fairgrind`.`clearing_tasks` (
   CONSTRAINT `clearing_tasks_clearing_task_id_fk` FOREIGN KEY (`clearing_task_id`) REFERENCES `clearing_tasks` (`id`) ON UPDATE CASCADE,
   CONSTRAINT `clearing_tasks_clearing_task_type_id_fk` FOREIGN KEY (`clearing_task_type_id`) REFERENCES `clearing_task_types` (`id`) ON UPDATE CASCADE,
   CONSTRAINT `clearing_tasks_clearing_task_status_id_fk` FOREIGN KEY (`clearing_task_status_id`) REFERENCES `clearing_task_statuses` (`id`) ON UPDATE CASCADE,
-  CONSTRAINT `clearing_tasks_user_id_fk` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)  ON UPDATE CASCADE
+  CONSTRAINT `clearing_tasks_task_id_fk` FOREIGN KEY (`task_id`) REFERENCES `tasks` (`id`)  ON UPDATE CASCADE,
+  CONSTRAINT `clearing_tasks_user_id_fk` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)  ON UPDATE CASCADE,
+  CONSTRAINT `task_reject_issues_id_fk` FOREIGN KEY (`task_reject_issues_id`) REFERENCES `task_reject_issues` (`id`)  ON UPDATE CASCADE
 ) {{.DB_TABLE_OPTIONS}};
 
-INSERT INTO `fairgrind`.`clearing_tasks`
-  (clearing_batch_id, clearing_task_type_id, clearing_task_status_id, user_id)
+INSERT INTO `fairgrind`.`tasks`
+  (batch_id, input_json, status_id, grinder_uid)
 VALUES
-  (7, 1, 2, {{.DB_TEMPLATE_USER1}}),
-  (9, 1, 2, {{.DB_TEMPLATE_USER1}});
+  (7, '[]', 3, {{.DB_TEMPLATE_USER1}});
+
+INSERT INTO `fairgrind`.`clearing_tasks`
+  (clearing_batch_id, clearing_task_type_id, clearing_task_status_id, task_id, user_id)
+VALUES
+  (7, 1, 2, 384, {{.DB_TEMPLATE_USER1}}),
+  (9, 1, 2, 384, {{.DB_TEMPLATE_USER1}});

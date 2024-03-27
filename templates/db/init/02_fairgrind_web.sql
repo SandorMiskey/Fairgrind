@@ -20,69 +20,6 @@ SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
 
 -- ----------------------------
--- Table structure for batch_statuses
--- ----------------------------
-DROP TABLE IF EXISTS `batch_statuses`;
-CREATE TABLE `batch_statuses`  (
-  `id` int NOT NULL,
-  `label` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
-  `description` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
-
--- ----------------------------
--- Records of batch_statuses
--- ----------------------------
-INSERT INTO `batch_statuses` VALUES (1, 'Unpublished', NULL);
-INSERT INTO `batch_statuses` VALUES (2, 'In progress', NULL);
-INSERT INTO `batch_statuses` VALUES (3, 'Approved', NULL);
-INSERT INTO `batch_statuses` VALUES (4, 'Completed', NULL);
-INSERT INTO `batch_statuses` VALUES (5, 'Closed', NULL);
-INSERT INTO `batch_statuses` VALUES (6, 'Deleted', NULL);
-
--- ----------------------------
--- Table structure for batch_types
--- ----------------------------
-DROP TABLE IF EXISTS `batch_types`;
-CREATE TABLE `batch_types`  (
-  `id` int NOT NULL,
-  `label` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
-  `description` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
-
--- ----------------------------
--- Records of batch_types
--- ----------------------------
-INSERT INTO `batch_types` VALUES (1, 'Entrance test', NULL);
-INSERT INTO `batch_types` VALUES (2, 'Test', NULL);
-INSERT INTO `batch_types` VALUES (3, 'Production', NULL);
-INSERT INTO `batch_types` VALUES (4, 'Training', NULL);
-
--- ----------------------------
--- Table structure for batches
--- ----------------------------
-DROP TABLE IF EXISTS `batches`;
-CREATE TABLE `batches`  (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `uid` int NULL DEFAULT NULL,
-  `project_id` int NULL DEFAULT NULL,
-  `type_id` int NULL DEFAULT NULL,
-  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
-  `number_of_data_items` int NULL DEFAULT NULL,
-  `deadline_ts` bigint NULL DEFAULT NULL,
-  `level` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
-  `cover_photo_uploaded_image_hash` char(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
-  `status_id` int NULL DEFAULT NULL COMMENT '1: Unpublished\r\n2: In progress\r\n3: Approved\r\n4: Completed\r\n5: Closed',
-  `create_ts` bigint NULL DEFAULT NULL,
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 26 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
-
--- ----------------------------
--- Records of batches
--- ----------------------------
-
--- ----------------------------
 -- Table structure for countries
 -- ----------------------------
 DROP TABLE IF EXISTS `countries`;
@@ -11446,9 +11383,9 @@ CREATE TABLE `tasks`  (
   `batch_id` int NULL DEFAULT NULL,
   `input_json` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL,
   `status_id` int NULL DEFAULT NULL,
-  `output_json` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL,
-  `start_ts` bigint NULL DEFAULT NULL,
-  `complete_ts` bigint NULL DEFAULT NULL,
+  -- `output_json` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL,
+  -- `start_ts` bigint NULL DEFAULT NULL,
+  -- `complete_ts` bigint NULL DEFAULT NULL,
   `grinder_uid` int NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 384 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
