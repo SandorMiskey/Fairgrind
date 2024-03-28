@@ -33,11 +33,20 @@
     "Tabler",
     "TIMEFORMAT"
   ],
-  "editor.foldingStrategy": "indentation",
   "files.exclude": {
     "**/*.fasthttp.gz": true,
     "**/main.wasm": true
   },
   "html.format.enable": false,
-  "go.inferGopath": false
+  "go.inferGopath": false,
+  "editor.showFoldingControls": "always",
+  // "editor.foldingStrategy": "auto",
+  "editor.foldingStrategy": "indentation",
+  "editor.defaultFoldingRangeProvider": "zokugun.explicit-folding",
+  "explicitFolding.rules": {
+    "*": {
+      "begin": "{{{",
+      "end": "}}}"
+    }
+  }
 }
