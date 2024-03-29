@@ -191,8 +191,8 @@ func v1_ledger_statuses_get(c *fiber.Ctx) error {
 // @Tags			/ledger
 // @Accept			json
 // @Produce		json
-// @Param			request	body		models.ClearingLedger	true	"json request body, ClearingLedgerLabelId and ClearingLedgerStatusId will be ignored and set to "withdraw" and "withdrawable" correspondingly"
-// @Success		200		{object}	models.ApiResponse{data=[]models.ClearingLedger}
+// @Param			request	body		models.V1LedgerWithdrawPost	true	"json request body, ClearingLedgerLabelId and ClearingLedgerStatusId will be ignored and set to "withdraw" and "withdrawable" correspondingly"
+// @Success		200		{object}	models.ApiResponse{data=[]models.V1LedgerWithdrawPost}
 // @Failure		400		{object}	models.ApiResponse{data=nil}
 // @Failure		500		{object}	models.ApiResponse{data=nil}
 // @Router			/ledger [delete]
@@ -206,20 +206,21 @@ func v1_ledger_withdraw_post(c *fiber.Ctx) error {
 	// endregion
 	// region: input
 
-	// withdraw := models.ClearingLedger{
-	// 	Amount:                 c.QueryFloat("amount", 0) * -1,
-	// 	ClearingLedgerLabelId:  CLEARING_LEDGER_LABEL_WITHDRAW,
-	// 	ClearingLedgerStatusId: CLEARING_LEDGER_STATUS_WITHDRAW,
-	// 	ClearingTokenId:        uint(c.QueryInt("clearing_token_id", 0)),
-	// 	Reference:              c.Query("reference"),
-	// 	UserId:                 uint(c.QueryInt("user_id", 0)),
-	// }
-	var withdraw models.ClearingLedger
-	if err := c.BodyParser(&withdraw); err != nil {
+	var request models.V1LedgerWithdrawPost
+	if err := c.BodyParser(&request); err != nil {
 		response.Data = err.Error()
 		return c.Status(400).JSON(response)
 	}
+	Logger(LOG_DEBUG, "request", request)
 
+	var withdraw models.ClearingLedger = models.ClearingLedger{
+		Amount:                 request.Amount * -1,
+		ClearingLedgerLabelId:  CLEARING_LEDGER_LABEL_WITHDRAW,
+		ClearingLedgerStatusId: CLEARING_LEDGER_STATUS_WITHDRAW,
+		ClearingTokenId:        request.ClearingTokenId,
+		Reference:              request.Reference,
+		UserId:                 request.UserId,
+	}
 	if withdraw.Amount > 0 {
 		response.Data = "amount cannot be less than 0"
 		return c.Status(400).JSON(response)
@@ -231,8 +232,6 @@ func v1_ledger_withdraw_post(c *fiber.Ctx) error {
 
 	// endregion
 	// region: data
-
-	// TODO: IN TX, check if new balance is under 0
 
 	tx := DB.Begin()
 	defer func() {
@@ -284,7 +283,7 @@ func v1_ledger_withdraw_post(c *fiber.Ctx) error {
 	}
 
 	response.Meta.Rows = 1
-	response.Data = withdraw
+	response.Data = request
 	response.Success = true
 
 	return c.Status(200).JSON(response)

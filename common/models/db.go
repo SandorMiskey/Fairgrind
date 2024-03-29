@@ -13,7 +13,7 @@ type GORM struct {
 	DeletedAt gorm.DeletedAt `json:"-" gorm:"index"`
 }
 
-// region: batches
+// region: batches {{{
 
 type ClearingBatchType struct {
 	GORM
@@ -42,23 +42,8 @@ type ClearingBatch struct {
 	Description           string              `json:"description"`
 }
 
-// endregion
-// region: ledger
-
-type ClearingLedger struct {
-	GORM
-	Amount                 float64 `json:"amount"`
-	ClearingTaskId         uint    `json:"clearing_task_id"`
-	ClearingLedgerStatusId uint    `json:"clearing_ledger_status_id" gorm:"type:SMALLINT UNSIGNED;"`
-	ClearingLedgerLabelId  uint    `json:"clearing_ledger_label_id" gorm:"type:SMALLINT UNSIGNED;"`
-	ClearingTokenId        uint    `json:"clearing_token_id" gorm:"type:MEDIUMINT UNSIGNED;"`
-	Reference              string  `json:"reference" maxLength:"1024"`
-	UserId                 uint    `json:"user_id" gorm:"type:INT(11);"`
-}
-
-func (ClearingLedger) TableName() string {
-	return "clearing_ledger"
-}
+// endregion }}}
+// region: ledger {{{
 
 type ClearingLedgerStatus struct {
 	GORM
@@ -75,8 +60,23 @@ type ClearingLedgerLabel struct {
 	Description string `json:"description"`
 }
 
-// endregion
-// region: task
+type ClearingLedger struct {
+	GORM
+	Amount                 float64 `json:"amount"`
+	ClearingTaskId         uint    `json:"clearing_task_id" gorm:"default:NULL;"`
+	ClearingLedgerStatusId uint    `json:"clearing_ledger_status_id" gorm:"type:SMALLINT UNSIGNED;"`
+	ClearingLedgerLabelId  uint    `json:"clearing_ledger_label_id" gorm:"type:SMALLINT UNSIGNED;"`
+	ClearingTokenId        uint    `json:"clearing_token_id" gorm:"type:MEDIUMINT UNSIGNED;"`
+	Reference              string  `json:"reference" maxLength:"1024" gorm:"default:NULL;"`
+	UserId                 uint    `json:"user_id" gorm:"type:INT(11);"`
+}
+
+func (ClearingLedger) TableName() string {
+	return "clearing_ledger"
+}
+
+// endregion }}}
+// region: task {{{
 
 type ClearingTaskStatus struct {
 	GORM
@@ -121,8 +121,8 @@ type ClearingTask struct {
 	// Input                *string `json:"input"`
 }
 
-// endregion
-// region: token
+// endregion }}}
+// region: token {{{
 
 type ClearingTokenType struct {
 	GORM
@@ -141,8 +141,8 @@ type ClearingToken struct {
 	ClearingTokenType   ClearingTokenType `json:"clearing_token_type"`
 }
 
-// endregion
-// region: wallet
+// endregion }}}
+// region: wallet {{{
 
 type ClearingWalletsSummedView struct {
 	ClearingLedgerAmountSum          float64   `json:"amount"`
@@ -166,4 +166,4 @@ type ClearingWalletsDetailedView struct {
 	ProjectName                      string    `json:"project_name"`
 }
 
-// endregion
+// endregion }}}

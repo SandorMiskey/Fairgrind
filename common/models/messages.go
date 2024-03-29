@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 )
 
-// region: api
+// region: api {{{
 
 type ApiRequest struct {
 	BodyRaw    string            `json:"body_raw,omitempty"`
@@ -24,8 +24,8 @@ type ApiResponse struct {
 	Success bool            `json:"success"`
 }
 
-// endregion
-// region: mq
+// endregion }}}
+// region: mq {{{
 
 type MqMsg struct {
 	Database string          `json:"database"`
@@ -34,4 +34,14 @@ type MqMsg struct {
 	Data     json.RawMessage `json:"data"`
 }
 
-// endregion
+// endregion }}}
+// region: v1 {{{
+
+type V1LedgerWithdrawPost struct {
+	Amount          float64 `json:"amount"`
+	ClearingTokenId uint    `json:"clearing_token_id"`
+	Reference       string  `json:"reference,omitempty"`
+	UserId          uint    `json:"user_id"`
+}
+
+// endregion }}}
