@@ -63,11 +63,11 @@ type ClearingLedgerLabel struct {
 type ClearingLedger struct {
 	GORM
 	Amount                 float64 `json:"amount"`
-	ClearingTaskId         uint    `json:"clearing_task_id" gorm:"default:NULL;"`
+	ClearingTaskId         uint    `json:"clearing_task_id,omitempty" gorm:"default:NULL;"`
 	ClearingLedgerStatusId uint    `json:"clearing_ledger_status_id" gorm:"type:SMALLINT UNSIGNED;"`
 	ClearingLedgerLabelId  uint    `json:"clearing_ledger_label_id" gorm:"type:SMALLINT UNSIGNED;"`
 	ClearingTokenId        uint    `json:"clearing_token_id" gorm:"type:MEDIUMINT UNSIGNED;"`
-	Reference              string  `json:"reference" maxLength:"1024" gorm:"default:NULL;"`
+	Reference              string  `json:"reference,omitempty" maxLength:"1024" gorm:"default:NULL;"`
 	UserId                 uint    `json:"user_id" gorm:"type:INT(11);"`
 }
 

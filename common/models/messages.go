@@ -44,4 +44,14 @@ type V1LedgerWithdrawPost struct {
 	UserId          uint    `json:"user_id"`
 }
 
+type V1LedgerCreditPost struct {
+	Amount                 float64 `json:"amount"`
+	ClearingLedgerStatusId uint    `json:"clearing_ledger_status_id"`
+	ClearingLedgerLabelId  uint    `json:"clearing_ledger_label_id"`
+	ClearingTaskId         uint    `json:"clearing_task_id,omitempty"`
+	ClearingTokenId        uint    `json:"clearing_token_id"`
+	Reference              string  `json:"reference,omitempty"`
+	UserId                 uint    `json:"user_id"`
+}
+
 // endregion }}}

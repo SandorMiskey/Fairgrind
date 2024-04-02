@@ -1,4 +1,4 @@
-// region: packages
+// region: packages {{{
 
 package main
 
@@ -10,8 +10,8 @@ import (
 	"gorm.io/gorm"
 )
 
-// endregion: packages
-// region: globals
+// endregion: packages }}}
+// region: globals {{{
 
 const (
 	CLEARING_LEDGER_STATUS_PENDING  uint = 1
@@ -19,8 +19,8 @@ const (
 	CLEARING_LEDGER_LABEL_WITHDRAW  uint = 7
 )
 
-// endregion
-// region: v1_ledger_get
+// endregion: globals }}}
+// region: v1_ledger_get {{{
 
 // @Summary		get ledger
 // @Description	get filtered list of ledger entries
@@ -42,12 +42,12 @@ const (
 // @Router			/ledger [get]
 func v1_ledger_get(c *fiber.Ctx) error {
 
-	// region: output
+	// region: output {{{
 
 	response := utils.GetResponse(c)
 
-	// endregion
-	// region: input
+	// endregion: output }}}
+	// region: input {{{
 
 	filters := &models.ClearingLedger{
 		ClearingLedgerLabelId:  uint(c.QueryInt("clearing_ledger_label_id", 0)),
@@ -64,8 +64,8 @@ func v1_ledger_get(c *fiber.Ctx) error {
 	page := c.QueryInt("orm_page", 0)
 	limit := c.QueryInt("orm_limit", 0)
 
-	// endregion
-	// region: data
+	// endregion }}}
+	// region: data {{{
 
 	var ledger []models.ClearingLedger
 	var count int64
@@ -85,8 +85,8 @@ func v1_ledger_get(c *fiber.Ctx) error {
 		return c.Status(500).JSON(response)
 	}
 
-	// endregion
-	// region: response
+	// endregion }}}
+	// region: response {{{
 
 	response.Meta.Rows = len(ledger)
 	response.Meta.Count = count
@@ -95,12 +95,83 @@ func v1_ledger_get(c *fiber.Ctx) error {
 
 	return c.Status(200).JSON(response)
 
-	// endregion: response
+	// endregion: response }}}
 
 }
 
-// endregion
-// region: v1_ledger_labels_get
+// endregion: v1_ledger_get }}}
+// region: v1_ledger_credit post {{{
+
+// @Summary		credit
+// @Description	credit to grinder's wallet
+// @Tags			/ledger
+// @Accept			json
+// @Produce		json
+// @Param			request	body		models.V1LedgerCreditPost	true	"json request body"
+// @Success		200		{object}	models.ApiResponse{data=models.V1LedgerCreditPost}
+// @Failure		400		{object}	models.ApiResponse{data=nil}
+// @Failure		500		{object}	models.ApiResponse{data=nil}
+// @Router			/ledger [post]
+// @Router			/ledger/credit [post]
+func v1_ledger_credit_post(c *fiber.Ctx) error {
+
+	// region: output {{{
+
+	response := utils.GetResponse(c)
+
+	// endregion }}}
+	// region: input {{{
+
+	var request models.V1LedgerCreditPost
+	if err := c.BodyParser(&request); err != nil {
+		response.Data = err.Error()
+		return c.Status(400).JSON(response)
+	}	
+	Logger(LOG_DEBUG, "request", request)
+
+	var credit models.ClearingLedger = models.ClearingLedger{
+		Amount:                 request.Amount,
+		ClearingLedgerLabelId:  request.ClearingLedgerLabelId,
+		ClearingLedgerStatusId: request.ClearingLedgerStatusId,
+		ClearingTaskId:         request.ClearingTaskId,
+		ClearingTokenId:        request.ClearingTokenId,
+		Reference:              request.Reference,
+		UserId:                 request.UserId,
+	}
+
+	if credit.Amount < 0 {
+		response.Data = "amount cannot be less than 0"
+		return c.Status(400).JSON(response)
+	}
+
+	if credit.ClearingLedgerLabelId == CLEARING_LEDGER_LABEL_WITHDRAW {
+		response.Data = "label id cannot be withdraw"
+		return c.Status(400).JSON(response)
+	}
+
+	// endregion }}}
+	// region: data {{{
+
+	result := DB.Create(&credit)
+	if result.Error != nil {
+		response.Data = result.Error.Error()
+		return c.Status(500).JSON(response)
+	}
+
+	// endregion }}}
+	// region: response {{{
+
+	response.Data = credit 
+	response.Success = true
+
+	return c.Status(200).JSON(response)
+
+	// endregion: response }}}
+
+}
+
+// endregion: v1_ledger_credit post }}}
+// region: v1_ledger_labels_get {{{
 
 // @Summary		ledger entry labels
 // @Description	get list of possible ledger entry labels
@@ -113,12 +184,12 @@ func v1_ledger_get(c *fiber.Ctx) error {
 // @Router			/ledger/labels [get]
 func v1_ledger_labels_get(c *fiber.Ctx) error {
 
-	// region: output
+	// region: output {{{
 
 	response := utils.GetResponse(c)
 
-	// endregion
-	// region: data
+	// endregion }}}
+	// region: data {{{
 
 	var labels []models.ClearingLedgerLabel
 	result := DB.Find(&labels)
@@ -128,8 +199,8 @@ func v1_ledger_labels_get(c *fiber.Ctx) error {
 		return c.Status(500).JSON(response)
 	}
 
-	// endregion
-	// region: response
+	// endregion }}}
+	// region: response {{{
 
 	response.Meta.Rows = len(labels)
 	response.Data = labels
@@ -137,12 +208,12 @@ func v1_ledger_labels_get(c *fiber.Ctx) error {
 
 	return c.Status(200).JSON(response)
 
-	// endregion: response
+	// endregion: response }}}
 
 }
 
-// endregion
-// region: v1_ledger_statuses_get
+// endregion: v1_ledger_labels_get }}}
+// region: v1_ledger_statuses_get {{{
 
 // @Summary		ledger entry statuses
 // @Description	get list of possible token ledger statuses
@@ -155,12 +226,12 @@ func v1_ledger_labels_get(c *fiber.Ctx) error {
 // @Router			/ledger/statuses [get]
 func v1_ledger_statuses_get(c *fiber.Ctx) error {
 
-	// region: output
+	// region: output {{{
 
 	response := utils.GetResponse(c)
 
-	// endregion
-	// region: data
+	// endregion }}}
+	// region: data {{{
 
 	var statuses []models.ClearingLedgerStatus
 	result := DB.Find(&statuses)
@@ -170,8 +241,8 @@ func v1_ledger_statuses_get(c *fiber.Ctx) error {
 		return c.Status(500).JSON(response)
 	}
 
-	// endregion
-	// region: response
+	// endregion }}}
+	// region: response {{{
 
 	response.Meta.Rows = len(statuses)
 	response.Data = statuses
@@ -179,32 +250,32 @@ func v1_ledger_statuses_get(c *fiber.Ctx) error {
 
 	return c.Status(200).JSON(response)
 
-	// endregion: response
+	// endregion: response }}}
 
 }
 
-// endregion
-// region: v1_ledger_withdraw_post
+// endregion: v1_ledger_statuses_get }}}
+// region: v1_ledger_withdraw_post {{{
 
 // @Summary		withdraw
 // @Description	withdraw from grinder's wallet
 // @Tags			/ledger
 // @Accept			json
 // @Produce		json
-// @Param			request	body		models.V1LedgerWithdrawPost	true	"json request body, ClearingLedgerLabelId and ClearingLedgerStatusId will be ignored and set to "withdraw" and "withdrawable" correspondingly"
-// @Success		200		{object}	models.ApiResponse{data=[]models.V1LedgerWithdrawPost}
+// @Param			request	body		models.V1LedgerWithdrawPost	true	"json request body"
+// @Success		200		{object}	models.ApiResponse{data=models.V1LedgerWithdrawPost}
 // @Failure		400		{object}	models.ApiResponse{data=nil}
 // @Failure		500		{object}	models.ApiResponse{data=nil}
 // @Router			/ledger [delete]
 // @Router			/ledger/withdraw [post]
 func v1_ledger_withdraw_post(c *fiber.Ctx) error {
 
-	// region: output
+	// region: output {{{
 
 	response := utils.GetResponse(c)
 
-	// endregion
-	// region: input
+	// endregion }}}
+	// region: input {{{
 
 	var request models.V1LedgerWithdrawPost
 	if err := c.BodyParser(&request); err != nil {
@@ -230,8 +301,8 @@ func v1_ledger_withdraw_post(c *fiber.Ctx) error {
 		return c.Status(400).JSON(response)
 	}
 
-	// endregion
-	// region: data
+	// endregion }}}
+	// region: data {{{
 
 	tx := DB.Begin()
 	defer func() {
@@ -252,8 +323,8 @@ func v1_ledger_withdraw_post(c *fiber.Ctx) error {
 		return c.Status(500).JSON(response)
 	}
 
-	// endregion
-	// region: availability
+	// endregion }}}
+	// region: availability {{{
 
 	var available models.ClearingWalletsSummedView
 	filter := models.ClearingWalletsSummedView{
@@ -273,8 +344,8 @@ func v1_ledger_withdraw_post(c *fiber.Ctx) error {
 		return c.Status(400).JSON(response)
 	}
 
-	// endregion
-	// region: response
+	// endregion }}}
+	// region: response {{{
 
 	if err := tx.Commit().Error; err != nil {
 		tx.Rollback()
@@ -288,8 +359,9 @@ func v1_ledger_withdraw_post(c *fiber.Ctx) error {
 
 	return c.Status(200).JSON(response)
 
-	// endregion: response
+	// endregion: response }}}
 
 }
 
-// endregion
+// endregion: v1_ledger_withdraw_post }}}
+

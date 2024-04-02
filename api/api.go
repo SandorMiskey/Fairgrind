@@ -1,4 +1,4 @@
-// region: packages
+// region: packages {{{
 
 package main
 
@@ -29,8 +29,8 @@ import (
 	"gorm.io/gorm"
 )
 
-// endregion: packages
-// region: globals
+// endregion: packages }}}
+// region: globals {{{
 
 var (
 	err error
@@ -75,25 +75,25 @@ const (
 	ENV_SWAGGER_TITLE    string = ENV_PREFIX + "SWAGGER_TITLE"
 )
 
-// endregion
+// endregion: globals }}}
 
 func main() {
 
-	// region: read .env
+	// region: read .env {{{
 
 	// Env, err = godotenv.Read()
 	// utils.Panic(err)
 	Env = utils.GetEnv()
 
-	// endregion: read .env
-	// region: logger
+	// endregion: read .env }}}
+	// region: logger {{{
 
 	utils.GetLogger(Env[ENV_LOG_SEVERITY], Env[ENV_LOG_PREFIX])
 	defer utils.Logger.Close()
 	Logger = utils.Logger.Out
 
-	// endregion
-	// region: db
+	// endregion }}}
+	// region: db {{{
 
 	// TODO: use "database/sql" for connection pool and fine tunning
 
@@ -108,8 +108,8 @@ func main() {
 	utils.Panic(err)
 	Logger(LOG_DEBUG, DBX)
 
-	// endregion
-	// region: redis
+	// endregion }}}
+	// region: redis {{{
 
 	/*
 		Cache = redis.NewClient(&redis.Options{
@@ -121,10 +121,10 @@ func main() {
 		Logger(LOG_DEBUG, Cache)
 	*/
 
-	// endregion: redis
-	// region: fiber
+	// endregion: redis }}}
+	// region: fiber {{{
 
-	// region: new app w/ logger
+	// region: new app w/ logger {{{
 
 	api := fiber.New(fiber.Config{
 		Prefork: false,
@@ -135,8 +135,8 @@ func main() {
 		TimeFormat: Env[ENV_FIBER_TIMEFORMAT],
 	}))
 
-	// endregion
-	// region: authentication
+	// endregion }}}
+	// region: authentication middleware {{{
 
 	api.Use(keyauth.New(keyauth.Config{
 		Next: func(c *fiber.Ctx) bool {
@@ -162,8 +162,8 @@ func main() {
 		},
 	}))
 
-	// endregion
-	// region: other middleware
+	// endregion }}}
+	// region: other middleware {{{
 
 	api.Use(cors.New())
 	api.Use(recover.New())
@@ -171,8 +171,8 @@ func main() {
 	api.Use(healthcheck.New())
 	api.Get("Env[ENV_FIBER_METRICS]", monitor.New())
 
-	// endregion
-	// region: swagger
+	// endregion }}}
+	// region: swagger {{{
 
 	//	@securityDefinitions.apikey	ApiKeyAuth
 	//	@in							header
@@ -187,33 +187,34 @@ func main() {
 		Title:    Env[ENV_SWAGGER_TITLE],
 	}))
 
-	// endregion
-	// region: routes
+	// endregion }}}
+	// region: routes {{{
 
 	v1 := api.Group(Env[ENV_SWAGGER_BASEPATH])
 
-	// region: batches
+	// region: batches {{{
 
 	v1_batches := v1.Group("/batches")
 	v1_batches.Get("/types", v1_batches_types_get)
 	v1_batches.Get("/statuses", v1_batches_statuses_get)
 
-	// endregion
-	// region: ledger
+	// endregion }}}
+	// region: ledger {{{
 
 	v1_ledger := v1.Group("/ledger")
 	v1_ledger.Get("", v1_ledger_get)
+	v1_ledger.Delete("", v1_ledger_withdraw_post)
+	v1_ledger.Post("", v1_ledger_credit_post)
+	v1_ledger.Post("/credit", v1_ledger_credit_post)
 	v1_ledger.Get("/labels", v1_ledger_labels_get)
 	v1_ledger.Get("/statuses", v1_ledger_statuses_get)
-	v1_ledger.Delete("", v1_ledger_withdraw_post)
 	v1_ledger.Post("/withdraw", v1_ledger_withdraw_post)
 	// TODO
-	// * credit (post)
 	// * swap (patch)
 	// * transfer (put)
 
-	// endregion
-	// region: tasks
+	// endregion }}}
+	// region: tasks {{{
 
 	v1_tasks := v1.Group("/tasks")
 	v1_tasks.Get("", v1_tasks_get)
@@ -224,34 +225,35 @@ func main() {
 	v1_tasks.Get("/types", v1_tasks_types_get)
 	v1_tasks.Get("/statuses", v1_tasks_statuses_get)
 
-	// endregion
-	// region: tokens
+	// endregion }}}
+	// region: tokens {{{
 
 	v1_tokens := v1.Group("/tokens")
 	v1_tokens.Get("", v1_tokens_get)
 	v1_tokens.Get("/types", v1_tokens_types_get)
 
-	// endregion
-	// region: wallets
+	// endregion }}}
+	// region: wallets {{{
 
 	v1_wallets := v1.Group("/wallets")
 	v1_wallets.Get("/summed", v1_wallets_summed_get)
 	v1_wallets.Get("/detailed", v1_wallets_detailed_get)
 
-	// endregion
+	// endregion }}}
 
 	api.Use(func(c *fiber.Ctx) error {
 		return c.SendStatus(404)
 	})
 
-	// endregion
-	// region: listen
+	// endregion }}}
+	// region: listen {{{
 
 	err := api.Listen(Env[ENV_FIBER_ADDRESS])
 	utils.Panic(err)
 
-	// endregion
+	// endregion }}}
 
-	// endregion
+	// endregion: fiber }}}
 
 }
+
