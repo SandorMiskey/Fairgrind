@@ -22,24 +22,24 @@ const (
 // endregion: globals }}}
 // region: v1_ledger_get {{{
 
-// @Summary		get ledger
+// @Summary	get ledger
 // @Description	get filtered list of ledger entries
-// @Tags			/ledger
-// @Accept			json
-// @Produce		json
-// @Param			id							query		int		false	"id"
-// @Param			user_id						query		int		false	"user/grinder id"
-// @Param			clearing_task_id			query		int		false	"task id"
-// @Param			clearing_ledger_status_id	query		int		false	"ledger entry status id"
-// @Param			clearing_ledger_label_id	query		int		false	"ledger entry label id"
-// @Param			clearing_token_id			query		int		false	"token id"
-// @Param			orm_order_by				query		string	false	"order by <param> <direction>, as in 'clearing_ledger_status_id asc, clearing_ledger_label_id desc'"
-// @Param			orm_page					query		int		false	"which page"
-// @Param			orm_limit					query		int		false	"page size (aka # of results)"
-// @Success		200							{object}	models.ApiResponse{data=[]models.ClearingLedger}
-// @Failure		400							{object}	models.ApiResponse{data=nil}
-// @Failure		500							{object}	models.ApiResponse{data=nil}
-// @Router			/ledger [get]
+// @Tags	/ledger
+// @Accept	json
+// @Produce	json
+// @Param	id				query	int	false	"id"
+// @Param	user_id				query	int	false	"user/grinder id"
+// @Param	clearing_task_id		query	int	false	"task id"
+// @Param	clearing_ledger_status_id	query	int	false	"ledger entry status id"
+// @Param	clearing_ledger_label_id	query	int	false	"ledger entry label id"
+// @Param	clearing_token_id		query	int	false	"token id"
+// @Param	orm_order_by			query	string	false	"order by <param> <direction>, as in 'clearing_ledger_status_id asc, clearing_ledger_label_id desc'"
+// @Param	orm_page			query	int	false	"which page"
+// @Param	orm_limit			query	int	false	"page size (aka # of results)"
+// @Success	200	{object}	models.ApiResponse{data=[]models.ClearingLedger}
+// @Failure	400	{object}	models.ApiResponse{data=nil}
+// @Failure	500	{object}	models.ApiResponse{data=nil}
+// @Router	/ledger [get]
 func v1_ledger_get(c *fiber.Ctx) error {
 
 	// region: output {{{
@@ -126,7 +126,7 @@ func v1_ledger_credit_post(c *fiber.Ctx) error {
 	if err := c.BodyParser(&request); err != nil {
 		response.Data = err.Error()
 		return c.Status(400).JSON(response)
-	}	
+	}
 	Logger(LOG_DEBUG, "request", request)
 
 	var credit models.ClearingLedger = models.ClearingLedger{
@@ -161,7 +161,7 @@ func v1_ledger_credit_post(c *fiber.Ctx) error {
 	// endregion }}}
 	// region: response {{{
 
-	response.Data = credit 
+	response.Data = credit
 	response.Success = true
 
 	return c.Status(200).JSON(response)
@@ -364,4 +364,3 @@ func v1_ledger_withdraw_post(c *fiber.Ctx) error {
 }
 
 // endregion: v1_ledger_withdraw_post }}}
-
