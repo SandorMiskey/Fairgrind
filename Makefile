@@ -14,7 +14,7 @@ build_init: dep
 	@. $(ENV) && cd init && GOOS="" go build -o ${PATH_BIN}/init
 build_services: dep
 	@echo "${GUM_PREFIX}building $(API)"
-	@. $(ENV) && cd $(API) && sed -i '' -e 's|//.*@BasePath.*$$|//	@BasePath	${API_SWAGGER_BASEPATH}|g' "$(API).go"
+	@#. $(ENV) && cd $(API) && sed -i '' -e 's|//.*@BasePath.*$$|//	@BasePath	${API_SWAGGER_BASEPATH}|g' "$(API).go"
 	@cd $(API) && swag fmt --generalInfo $(API).go
 	@cd $(API) && swag init --generalInfo $(API).go --output ./swagger --parseDependency true --parseDependencyLevel 3 --parseInternal true
 	@cd $(API) && go mod tidy
