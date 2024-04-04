@@ -122,5 +122,5 @@ VALUES
 INSERT INTO `fairgrind`.`clearing_tasks`
   (clearing_batch_id, clearing_task_type_id, clearing_task_status_id, task_id, user_id)
 VALUES
-  (7, 1, 2, 384, {{.DB_TEMPLATE_USER1}}),
-  (9, 1, 2, 384, {{.DB_TEMPLATE_USER1}});
+  (7, 1, 2, 511, {{.DB_TEMPLATE_USER1}}),
+  (9, 1, 2, 511, {{.DB_TEMPLATE_USER1}});

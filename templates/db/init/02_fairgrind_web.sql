@@ -1,23 +1,42 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : fairgrind martketplace local
+ Source Server         : 18.197.24.101
  Source Server Type    : MySQL
- Source Server Version : 101106 (10.11.6-MariaDB)
- Source Host           : localhost:3306
+ Source Server Version : 101105 (10.11.5-MariaDB-1:10.11.5+maria~ubu2204-log)
+ Source Host           : 18.197.24.101:3306
  Source Schema         : fairgrind
 
  Target Server Type    : MySQL
- Target Server Version : 101106 (10.11.6-MariaDB)
+ Target Server Version : 101105 (10.11.5-MariaDB-1:10.11.5+maria~ubu2204-log)
  File Encoding         : 65001
 
- Date: 25/03/2024 13:08:40
+ Date: 04/04/2024 16:48:26
 */
 
 USE `{{.DB_SCHEMA}}`;
 
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
+
+-- ----------------------------
+-- Table structure for batches_extras
+-- ----------------------------
+DROP TABLE IF EXISTS `batches_extras`;
+CREATE TABLE `batches_extras`  (
+  `clearing_batch_id` int NOT NULL,
+  `uid` int NULL DEFAULT NULL,
+  `number_of_data_items` int NULL DEFAULT NULL,
+  `deadline_ts` bigint NULL DEFAULT NULL,
+  `level` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+  `cover_photo_uploaded_image_hash` char(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+  `create_ts` bigint NULL DEFAULT NULL,
+  PRIMARY KEY (`clearing_batch_id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of batches_extras
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for countries
@@ -27,7 +46,7 @@ CREATE TABLE `countries`  (
   `id` int NOT NULL AUTO_INCREMENT,
   `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 228 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 228 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of countries
@@ -268,7 +287,7 @@ CREATE TABLE `interests`  (
   `id` int NOT NULL AUTO_INCREMENT,
   `name` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 749 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 749 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of interests
@@ -1030,7 +1049,7 @@ CREATE TABLE `languages`  (
   `id` int NOT NULL AUTO_INCREMENT,
   `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 120 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 120 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of languages
@@ -1164,7 +1183,7 @@ CREATE TABLE `professions_and_skills`  (
   `name` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `name`(`name` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 10036 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 10036 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of professions_and_skills
@@ -11214,6 +11233,7 @@ CREATE TABLE `projects`  (
   `uid` int NOT NULL,
   `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `description` varchar(2048) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+  `training_project` int NULL DEFAULT NULL,
   `working_environment` int NULL DEFAULT NULL,
   `data_location` int NULL DEFAULT NULL,
   `task_type_id` int NULL DEFAULT NULL,
@@ -11243,11 +11263,12 @@ CREATE TABLE `projects`  (
   `status_id` int NULL DEFAULT NULL,
   `create_ts` bigint NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 30 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1017 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of projects
 -- ----------------------------
+-- INSERT INTO `projects` VALUES (1000, 1000, 'Clearing', 'Clearing template project', 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for projects_x_grinder_countries
@@ -11256,7 +11277,7 @@ DROP TABLE IF EXISTS `projects_x_grinder_countries`;
 CREATE TABLE `projects_x_grinder_countries`  (
   `project_id` int NOT NULL,
   `country_id` int NOT NULL
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of projects_x_grinder_countries
@@ -11269,7 +11290,7 @@ DROP TABLE IF EXISTS `projects_x_grinder_languages`;
 CREATE TABLE `projects_x_grinder_languages`  (
   `project_id` int NOT NULL,
   `language_id` int NOT NULL
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of projects_x_grinder_languages
@@ -11282,7 +11303,7 @@ DROP TABLE IF EXISTS `projects_x_grinder_professions`;
 CREATE TABLE `projects_x_grinder_professions`  (
   `project_id` int NOT NULL,
   `profession_id` int NOT NULL
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of projects_x_grinder_professions
@@ -11295,7 +11316,7 @@ DROP TABLE IF EXISTS `projects_x_grinders`;
 CREATE TABLE `projects_x_grinders`  (
   `project_id` int NULL DEFAULT NULL,
   `grinder_uid` int NULL DEFAULT NULL
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of projects_x_grinders
@@ -11310,7 +11331,7 @@ CREATE TABLE `task_reject_issues`  (
   `text` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `deleted` tinyint NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of task_reject_issues
@@ -11328,7 +11349,7 @@ CREATE TABLE `task_reject_issues_x_use_cases`  (
   `use_case_id` int NOT NULL,
   INDEX `task_reject_issue_id`(`task_reject_issue_id` ASC) USING BTREE,
   INDEX `use_case_id`(`use_case_id` ASC) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of task_reject_issues_x_use_cases
@@ -11347,7 +11368,7 @@ CREATE TABLE `task_statuses`  (
   `label` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `description` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of task_statuses
@@ -11355,6 +11376,9 @@ CREATE TABLE `task_statuses`  (
 INSERT INTO `task_statuses` VALUES (1, 'New', NULL);
 INSERT INTO `task_statuses` VALUES (2, 'In progress', NULL);
 INSERT INTO `task_statuses` VALUES (3, 'Ready', NULL);
+INSERT INTO `task_statuses` VALUES (4, 'Review in progress', NULL);
+INSERT INTO `task_statuses` VALUES (5, 'Reviewer approved', NULL);
+INSERT INTO `task_statuses` VALUES (6, 'Reviewer rejected', NULL);
 
 -- ----------------------------
 -- Table structure for task_types
@@ -11365,7 +11389,7 @@ CREATE TABLE `task_types`  (
   `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `description` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of task_types
@@ -11380,15 +11404,25 @@ INSERT INTO `task_types` VALUES (1000, 'Data collection', 'Grinders submit image
 DROP TABLE IF EXISTS `tasks`;
 CREATE TABLE `tasks`  (
   `id` int NOT NULL AUTO_INCREMENT,
+  `task_group_uuid` char(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `batch_id` int NULL DEFAULT NULL,
   `input_json` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL,
   `status_id` int NULL DEFAULT NULL,
-  -- `output_json` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL,
-  -- `start_ts` bigint NULL DEFAULT NULL,
-  -- `complete_ts` bigint NULL DEFAULT NULL,
+  `output_json` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL,
+  `start_ts` bigint NULL DEFAULT NULL,
+  `complete_ts` bigint NULL DEFAULT NULL,
   `grinder_uid` int NULL DEFAULT NULL,
+  `annotation_uuid` char(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+  `review_annotation_uuid` char(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+  `review_start_ts` bigint NULL DEFAULT NULL,
+  `review_complete_ts` bigint NULL DEFAULT NULL,
+  `task_reject_issue_id` int NULL DEFAULT NULL,
+  `task_reject_custom_text` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+  `reviewer_uid` int NULL DEFAULT NULL,
+  `review_output_json` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL,
+  `review_status_id` int NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 384 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 511 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of tasks
@@ -11406,7 +11440,7 @@ CREATE TABLE `tasks_x_input_data`  (
   `text_piece_id` int NULL DEFAULT NULL,
   `uploaded_image_id` int NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 364 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 491 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of tasks_x_input_data
@@ -11420,7 +11454,7 @@ CREATE TABLE `text_pieces`  (
   `id` int NOT NULL AUTO_INCREMENT,
   `text_piece` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 80 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 108 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of text_pieces
@@ -11436,7 +11470,7 @@ CREATE TABLE `token_types`  (
   `type` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `currency` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of token_types
@@ -11463,7 +11497,7 @@ CREATE TABLE `training_sessions`  (
   INDEX `batch_id`(`batch_id` ASC) USING BTREE,
   INDEX `uid`(`uid` ASC) USING BTREE,
   INDEX `batch_id__uid`(`uid` ASC, `batch_id` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 680047 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 680051 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of training_sessions
@@ -11489,7 +11523,7 @@ CREATE TABLE `training_sessions_x_tasks`  (
   `task_reject_custom_text` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `status_id` int NOT NULL,
   PRIMARY KEY (`id`, `status_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 386 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 416 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of training_sessions_x_tasks
@@ -11506,7 +11540,7 @@ CREATE TABLE `transaction_types`  (
   `token_type_id` int NOT NULL,
   `amount` decimal(20, 2) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of transaction_types
@@ -11531,7 +11565,7 @@ CREATE TABLE `transactions`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `user_id`(`user_id` ASC) USING BTREE,
   INDEX `user_id__token_type_id`(`user_id` ASC, `token_type_id` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 33 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 38 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of transactions
@@ -11552,7 +11586,7 @@ CREATE TABLE `uploaded_files`  (
   `create_ts` bigint NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `hash_idx`(`hash` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 8691 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 8827 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of uploaded_files
@@ -11571,7 +11605,7 @@ CREATE TABLE `uploaded_images`  (
   `create_ts` bigint NOT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `hash_idx`(`hash` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 4218 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 4284 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of uploaded_images
@@ -11585,7 +11619,7 @@ CREATE TABLE `use_case_templates`  (
   `id` int NOT NULL AUTO_INCREMENT,
   `template_xml` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of use_case_templates
@@ -11609,7 +11643,7 @@ CREATE TABLE `use_cases`  (
   `help_text_html` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL,
   `use_case_template_id` int NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of use_cases
@@ -11654,11 +11688,13 @@ CREATE TABLE `users`  (
   `availability` tinyint NULL DEFAULT NULL,
   `project_types` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 65 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1010 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of users
 -- ----------------------------
+-- INSERT INTO `users` VALUES (1000, 1, '', 'Clearing template user #1', '', '', 0, 0, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+-- INSERT INTO `users` VALUES (1001, 1, '', 'Clearing template user #2', '', '', 0, 0, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for users_x_interests
@@ -11667,7 +11703,7 @@ DROP TABLE IF EXISTS `users_x_interests`;
 CREATE TABLE `users_x_interests`  (
   `user_id` int NOT NULL,
   `interest_id` int NOT NULL
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of users_x_interests
@@ -11680,7 +11716,7 @@ DROP TABLE IF EXISTS `users_x_languages`;
 CREATE TABLE `users_x_languages`  (
   `user_id` int NOT NULL,
   `language_id` int NOT NULL
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of users_x_languages
@@ -11712,7 +11748,7 @@ DROP TABLE IF EXISTS `users_x_professions`;
 CREATE TABLE `users_x_professions`  (
   `user_id` int NOT NULL,
   `profession_id` int NOT NULL
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of users_x_professions
@@ -11728,10 +11764,14 @@ CREATE TABLE `wallets`  (
   `token_type_id` int NOT NULL,
   `bc_address` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 43 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 51 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of wallets
 -- ----------------------------
+INSERT INTO `wallets` VALUES (47, 1006, 1, NULL);
+INSERT INTO `wallets` VALUES (48, 1007, 1, NULL);
+INSERT INTO `wallets` VALUES (49, 1008, 1, NULL);
+INSERT INTO `wallets` VALUES (50, 1009, 1, NULL);
 
 SET FOREIGN_KEY_CHECKS = 1;
