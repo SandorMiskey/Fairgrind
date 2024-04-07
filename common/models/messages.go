@@ -1,9 +1,8 @@
+// packages {{{
+
 package models
 
-import (
-	"encoding/json"
-)
-
+// }}}
 // region: api {{{
 
 type ApiRequest struct {
@@ -28,10 +27,12 @@ type ApiResponse struct {
 // region: mq {{{
 
 type MqMsg struct {
-	Database string          `json:"database"`
-	Table    string          `json:"table"`
-	Type     string          `json:"type"`
-	Data     json.RawMessage `json:"data"`
+	Data     map[string]interface{} `json:"data"`
+	Database string                 `json:"database"`
+	Old      map[string]interface{} `json:"old"`
+	Table    string                 `json:"table"`
+	Type     string                 `json:"type"`
+	Xid      uint                   `json:"xid"`
 }
 
 // endregion }}}

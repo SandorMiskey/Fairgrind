@@ -1,8 +1,9 @@
-// region: packages
+// region: packages {{{
 
 package utils
 
 import (
+	"encoding/json"
 	"fmt"
 	"log/syslog"
 	"models"
@@ -16,8 +17,8 @@ import (
 	"gorm.io/gorm"
 )
 
-// endregion
-// region: globals
+// endregion }}}
+// region: globals {{{
 
 var (
 	Logger      *log.Logger
@@ -25,21 +26,9 @@ var (
 	LogSeverity syslog.Priority = log.LOG_INFO
 )
 
-// endregion: globals
+// endregion: globals }}}
 
-func Panic(err error, s ...string) {
-	if err != nil {
-		s = append([]string{err.Error()}, s...)
-		msg := strings.Join(s, " -> ")
-		if Logger != nil {
-			Logger.Out(syslog.LOG_EMERG, msg)
-		}
-		fmt.Fprintln(os.Stderr, msg)
-		os.Exit(1)
-	}
-}
-
-func GetEnv(dotenv ...string) map[string]string {
+func GetEnv(dotenv ...string) map[string]string { // {{{
 	err := godotenv.Load(dotenv...)
 	if err != nil {
 		if Logger != nil {
@@ -57,11 +46,11 @@ func GetEnv(dotenv ...string) map[string]string {
 	}
 
 	return envVars
-}
+} // }}}
 
-func GetLogger(p ...string) *log.Logger {
+func GetLogger(p ...string) *log.Logger { // {{{
 
-	// region: settings
+	// region: settings {{{
 
 	severity := syslog.Priority(LogSeverity)
 	prefix := LogPrefix
@@ -74,8 +63,8 @@ func GetLogger(p ...string) *log.Logger {
 		prefix = p[1]
 	}
 
-	// endregion
-	// region: mute
+	// endregion }}}
+	// region: mute {{{
 
 	if severity < syslog.LOG_INFO {
 		log.ChDefaults.Welcome = nil
@@ -85,21 +74,14 @@ func GetLogger(p ...string) *log.Logger {
 		log.ChDefaults.Welcome = &welcome
 	}
 
-	// endregion
+	// endregion }}}
+
 	Logger = log.NewLogger()
 	_, _ = Logger.NewCh(log.ChConfig{Severity: &severity, Prefix: &prefix})
 	return Logger
-}
+} // }}}
 
-func GetResponse(c *fiber.Ctx) models.ApiResponse {
-	// meta := make(models.ApiResponseMeta)
-	// meta["queries"] = c.Queries()
-	// meta["body_raw"] = c.BodyRaw()
-	// meta["req_headers"] = c.GetReqHeaders()
-	// var meta models.ApiResponseMeta
-	// meta.Queries = c.Queries()
-	// meta.Success = false
-
+func GetResponse(c *fiber.Ctx) models.ApiResponse { // {{{
 	return models.ApiResponse{
 		Request: models.ApiRequest{
 			BodyRaw: string(c.BodyRaw()),
@@ -108,9 +90,21 @@ func GetResponse(c *fiber.Ctx) models.ApiResponse {
 		},
 		Success: false,
 	}
-}
+} // }}}
 
-func Paginate(page, size int) func(db *gorm.DB) *gorm.DB {
+func Panic(err error, s ...string) { // {{{
+	if err != nil {
+		s = append([]string{err.Error()}, s...)
+		msg := strings.Join(s, " -> ")
+		if Logger != nil {
+			Logger.Out(syslog.LOG_EMERG, msg)
+		}
+		fmt.Fprintln(os.Stderr, msg)
+		os.Exit(1)
+	}
+} // }}}
+
+func Paginate(page, size int) func(db *gorm.DB) *gorm.DB { // {{{
 	return func(db *gorm.DB) *gorm.DB {
 		if page <= 0 {
 			page = 1
@@ -125,4 +119,16 @@ func Paginate(page, size int) func(db *gorm.DB) *gorm.DB {
 		offset := (page - 1) * size
 		return db.Offset(offset).Limit(size)
 	}
-}
+} // }}}
+
+func JsonPP(msg interface{}) string { // {{{
+	var bytes []byte
+	var err error
+
+	bytes, err = json.MarshalIndent(msg, "", "    ")
+	if err != nil {
+		bytes = []byte(fmt.Sprintf("%v (%s)", msg, err))
+	}
+
+	return string(bytes)
+} // }}}
