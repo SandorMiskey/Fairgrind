@@ -22,24 +22,24 @@ const (
 // endregion: globals }}}
 // region: v1_ledger_get {{{
 
-// @Summary	get ledger
-// @Description	get filtered list of ledger entries
-// @Tags	/ledger
-// @Accept	json
-// @Produce	json
-// @Param	id				query	int	false	"id"
-// @Param	user_id				query	int	false	"user/grinder id"
-// @Param	clearing_task_id		query	int	false	"task id"
-// @Param	clearing_ledger_status_id	query	int	false	"ledger entry status id"
-// @Param	clearing_ledger_label_id	query	int	false	"ledger entry label id"
-// @Param	clearing_token_id		query	int	false	"token id"
-// @Param	orm_order_by			query	string	false	"order by <param> <direction>, as in 'clearing_ledger_status_id asc, clearing_ledger_label_id desc'"
-// @Param	orm_page			query	int	false	"which page"
-// @Param	orm_limit			query	int	false	"page size (aka # of results)"
-// @Success	200	{object}	models.ApiResponse{data=[]models.ClearingLedger}
-// @Failure	400	{object}	models.ApiResponse{data=nil}
-// @Failure	500	{object}	models.ApiResponse{data=nil}
-// @Router	/ledger [get]
+//	@Summary		get ledger
+//	@Description	get filtered list of ledger entries
+//	@Tags			/ledger
+//	@Accept			json
+//	@Produce		json
+//	@Param			id							query		int		false	"id"
+//	@Param			user_id						query		int		false	"user/grinder id"
+//	@Param			clearing_task_id			query		int		false	"task id"
+//	@Param			clearing_ledger_status_id	query		int		false	"ledger entry status id"
+//	@Param			clearing_ledger_label_id	query		int		false	"ledger entry label id"
+//	@Param			clearing_token_id			query		int		false	"token id"
+//	@Param			orm_order_by				query		string	false	"order by <param> <direction>, as in 'clearing_ledger_status_id asc, clearing_ledger_label_id desc'"
+//	@Param			orm_page					query		int		false	"which page"
+//	@Param			orm_limit					query		int		false	"page size (aka # of results)"
+//	@Success		200							{object}	models.ApiResponse{data=[]models.ClearingLedger}
+//	@Failure		400							{object}	models.ApiResponse{data=nil}
+//	@Failure		500							{object}	models.ApiResponse{data=nil}
+//	@Router			/ledger [get]
 func v1_ledger_get(c *fiber.Ctx) error {
 
 	// region: output {{{
@@ -102,17 +102,17 @@ func v1_ledger_get(c *fiber.Ctx) error {
 // endregion: v1_ledger_get }}}
 // region: v1_ledger_credit post {{{
 
-// @Summary		credit
-// @Description	credit to grinder's wallet
-// @Tags			/ledger
-// @Accept			json
-// @Produce		json
-// @Param			request	body		models.V1LedgerCreditPost	true	"json request body"
-// @Success		200		{object}	models.ApiResponse{data=models.V1LedgerCreditPost}
-// @Failure		400		{object}	models.ApiResponse{data=nil}
-// @Failure		500		{object}	models.ApiResponse{data=nil}
-// @Router			/ledger [post]
-// @Router			/ledger/credit [post]
+//	@Summary		credit
+//	@Description	credit to grinder's wallet
+//	@Tags			/ledger
+//	@Accept			json
+//	@Produce		json
+//	@Param			request	body		models.V1LedgerCreditPost	true	"json request body"
+//	@Success		200		{object}	models.ApiResponse{data=models.V1LedgerCreditPost}
+//	@Failure		400		{object}	models.ApiResponse{data=nil}
+//	@Failure		500		{object}	models.ApiResponse{data=nil}
+//	@Router			/ledger [post]
+//	@Router			/ledger/credit [post]
 func v1_ledger_credit_post(c *fiber.Ctx) error {
 
 	// region: output {{{
@@ -173,15 +173,15 @@ func v1_ledger_credit_post(c *fiber.Ctx) error {
 // endregion: v1_ledger_credit post }}}
 // region: v1_ledger_labels_get {{{
 
-// @Summary		ledger entry labels
-// @Description	get list of possible ledger entry labels
-// @Tags			/ledger
-// @Accept			json
-// @Produce		json
-// @Success		200	{object}	models.ApiResponse{data=[]models.ClearingLedgerLabel}
-// @Failure		400	{object}	models.ApiResponse{data=nil}
-// @Failure		500	{object}	models.ApiResponse{data=nil}
-// @Router			/ledger/labels [get]
+//	@Summary		ledger entry labels
+//	@Description	get list of possible ledger entry labels
+//	@Tags			/ledger
+//	@Accept			json
+//	@Produce		json
+//	@Success		200	{object}	models.ApiResponse{data=[]models.ClearingLedgerLabel}
+//	@Failure		400	{object}	models.ApiResponse{data=nil}
+//	@Failure		500	{object}	models.ApiResponse{data=nil}
+//	@Router			/ledger/labels [get]
 func v1_ledger_labels_get(c *fiber.Ctx) error {
 
 	// region: output {{{
@@ -215,15 +215,15 @@ func v1_ledger_labels_get(c *fiber.Ctx) error {
 // endregion: v1_ledger_labels_get }}}
 // region: v1_ledger_statuses_get {{{
 
-// @Summary		ledger entry statuses
-// @Description	get list of possible token ledger statuses
-// @Tags			/ledger
-// @Accept			json
-// @Produce		json
-// @Success		200	{object}	models.ApiResponse{data=[]models.ClearingLedgerStatus}
-// @Failure		400	{object}	models.ApiResponse{data=nil}
-// @Failure		500	{object}	models.ApiResponse{data=nil}
-// @Router			/ledger/statuses [get]
+//	@Summary		ledger entry statuses
+//	@Description	get list of possible token ledger statuses
+//	@Tags			/ledger
+//	@Accept			json
+//	@Produce		json
+//	@Success		200	{object}	models.ApiResponse{data=[]models.ClearingLedgerStatus}
+//	@Failure		400	{object}	models.ApiResponse{data=nil}
+//	@Failure		500	{object}	models.ApiResponse{data=nil}
+//	@Router			/ledger/statuses [get]
 func v1_ledger_statuses_get(c *fiber.Ctx) error {
 
 	// region: output {{{
@@ -257,17 +257,17 @@ func v1_ledger_statuses_get(c *fiber.Ctx) error {
 // endregion: v1_ledger_statuses_get }}}
 // region: v1_ledger_withdraw_post {{{
 
-// @Summary		withdraw
-// @Description	withdraw from grinder's wallet
-// @Tags			/ledger
-// @Accept			json
-// @Produce		json
-// @Param			request	body		models.V1LedgerWithdrawPost	true	"json request body"
-// @Success		200		{object}	models.ApiResponse{data=models.V1LedgerWithdrawPost}
-// @Failure		400		{object}	models.ApiResponse{data=nil}
-// @Failure		500		{object}	models.ApiResponse{data=nil}
-// @Router			/ledger [delete]
-// @Router			/ledger/withdraw [post]
+//	@Summary		withdraw
+//	@Description	withdraw from grinder's wallet
+//	@Tags			/ledger
+//	@Accept			json
+//	@Produce		json
+//	@Param			request	body		models.V1LedgerWithdrawPost	true	"json request body"
+//	@Success		200		{object}	models.ApiResponse{data=models.V1LedgerWithdrawPost}
+//	@Failure		400		{object}	models.ApiResponse{data=nil}
+//	@Failure		500		{object}	models.ApiResponse{data=nil}
+//	@Router			/ledger [delete]
+//	@Router			/ledger/withdraw [post]
 func v1_ledger_withdraw_post(c *fiber.Ctx) error {
 
 	// region: output {{{
