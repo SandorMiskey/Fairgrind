@@ -312,13 +312,13 @@ func main() { // {{{
 					}
 
 					// }}}
-					// records already in the ledger {{{
+					// TODO: records already in the ledger {{{
 
 					logger(LOG_DEBUG, msg.Xid, "dskfléajsdféksjadfkésajféasdjkfsaédifjsaéifjaséd")
 					continue
 
 					// }}}
-					// tasks not yet recorded in the ledger {{{
+					// TODO: tasks not yet recorded in the ledger {{{
 
 					// }}}
 

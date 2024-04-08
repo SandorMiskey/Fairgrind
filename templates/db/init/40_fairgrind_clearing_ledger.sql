@@ -80,15 +80,3 @@ CREATE TABLE `{{.DB_SCHEMA}}`.`clearing_ledger` (
 	CONSTRAINT `clearing_ledger_clearing_ledger_label_id_fk` FOREIGN KEY (`clearing_ledger_label_id`) REFERENCES `clearing_ledger_labels` (`id`) ON UPDATE CASCADE
 ) {{.DB_TABLE_OPTIONS}};
 
-INSERT INTO `{{.DB_SCHEMA}}`.`clearing_ledger`
-	(user_id, clearing_task_id, reference, clearing_ledger_status_id, clearing_ledger_label_id, amount, clearing_token_id)
-VALUES
-	({{.DB_TEMPLATE_USER1}}, NULL, 'Withdrawable FGDT #1', 2, 3, 500.0, 5),
-	({{.DB_TEMPLATE_USER1}}, NULL, 'Withdrawable FGDT #2', 2, 3, 500.0, 5),
-	({{.DB_TEMPLATE_USER1}}, NULL, 'Withdrew FGDT', 2, 7, -100.0, 5),
-	({{.DB_TEMPLATE_USER1}}, 1, 'Pending FGDT #1', 1, 2, 100.0, 5),
-	({{.DB_TEMPLATE_USER1}}, 2, 'Pending FGDT #2', 1, 2, 50.0, 5),
-	({{.DB_TEMPLATE_USER1}}, 1, 'Pending USD #1', 1, 2, 10.0, 1),
-	({{.DB_TEMPLATE_USER1}}, 1, 'Pending USD #2', 1, 2, 20.0, 1),
-	({{.DB_TEMPLATE_USER2}}, NULL, 'Pending USD #1', 1, 2, 30.0, 1);
-

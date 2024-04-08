@@ -78,15 +78,3 @@ CREATE TABLE `{{.DB_SCHEMA}}`.`clearing_batches` (
   CONSTRAINT `clearing_batches_projects_fk` FOREIGN KEY (`project_id`) REFERENCES `projects` (`id`) ON UPDATE CASCADE
 ) {{.DB_TABLE_OPTIONS}};
 
-INSERT INTO {{.DB_SCHEMA}}.clearing_batches
-  (project_id, user_id, clearing_batch_type_id, clearing_batch_status_id, label, description)
-VALUES
-  ({{.DB_TEMPLATE_PROJECT}}, {{.DB_TEMPLATE_USER1}}, 1, 2, 'Exam template #1', 'Clearing template batch: type=Exam, status=In progress'),
-  ({{.DB_TEMPLATE_PROJECT}}, {{.DB_TEMPLATE_USER1}}, 1, 3, 'Exam template #2', 'Clearing template batch: type=Exam, status=Suspended'),
-  ({{.DB_TEMPLATE_PROJECT}}, {{.DB_TEMPLATE_USER1}}, 1, 5, 'Exam template #3', 'Clearing template batch: type=Exam, status=Cleared'),
-  ({{.DB_TEMPLATE_PROJECT}}, {{.DB_TEMPLATE_USER1}}, 2, 2, 'Test template #1', 'Clearing template batch: type=Test, status=In progress'),
-  ({{.DB_TEMPLATE_PROJECT}}, {{.DB_TEMPLATE_USER1}}, 2, 3, 'Test template #2', 'Clearing template batch: type=Test, status=Suspended'),
-  ({{.DB_TEMPLATE_PROJECT}}, {{.DB_TEMPLATE_USER1}}, 2, 5, 'Test template #3', 'Clearing template batch: type=Test, status=Cleared'),
-  ({{.DB_TEMPLATE_PROJECT}}, {{.DB_TEMPLATE_USER1}}, 3, 2, 'Prod template #1', 'Clearing template batch: type=Production, status=In progress'),
-  ({{.DB_TEMPLATE_PROJECT}}, {{.DB_TEMPLATE_USER1}}, 3, 3, 'Prod template #2', 'Clearing template batch: type=Production, status=Suspended'),
-  ({{.DB_TEMPLATE_PROJECT}}, {{.DB_TEMPLATE_USER1}}, 3, 5, 'Prod template #3', 'Clearing template batch: type=Production, status=Cleared');

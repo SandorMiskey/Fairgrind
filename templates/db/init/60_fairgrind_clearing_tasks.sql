@@ -114,13 +114,3 @@ CREATE TABLE `fairgrind`.`clearing_tasks` (
   CONSTRAINT `task_reject_issues_id_fk` FOREIGN KEY (`task_reject_issues_id`) REFERENCES `task_reject_issues` (`id`)  ON UPDATE CASCADE
 ) {{.DB_TABLE_OPTIONS}};
 
-INSERT INTO `fairgrind`.`tasks`
-  (batch_id, input_json, status_id, grinder_uid)
-VALUES
-  (7, '[]', 3, {{.DB_TEMPLATE_USER1}});
-
-INSERT INTO `fairgrind`.`clearing_tasks`
-  (clearing_batch_id, clearing_task_type_id, clearing_task_status_id, task_id, user_id)
-VALUES
-  (7, 1, 2, 511, {{.DB_TEMPLATE_USER1}}),
-  (9, 1, 2, 511, {{.DB_TEMPLATE_USER1}});
