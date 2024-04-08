@@ -2,9 +2,9 @@
 -- Clearing ledger statuses
 --
 
-DROP TABLE IF EXISTS `{{.DB_SCHEMA}}`.`clearing_ledger_statuses`;
+DROP TABLE IF EXISTS `[[[.DB_SCHEMA]]]`.`clearing_ledger_statuses`;
 
-CREATE TABLE `{{.DB_SCHEMA}}`.`clearing_ledger_statuses` (
+CREATE TABLE `[[[.DB_SCHEMA]]]`.`clearing_ledger_statuses` (
 	`id` SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
 	`label` TINYTEXT NOT NULL,
 	`description` TINYTEXT DEFAULT NULL,
@@ -14,9 +14,9 @@ CREATE TABLE `{{.DB_SCHEMA}}`.`clearing_ledger_statuses` (
 	`deleted_at` DATETIME(3) NULL DEFAULT NULL,
 	PRIMARY KEY (`id`),
 	KEY `clearing_ledger_statuses_deleted_at_idx` (`deleted_at`) USING BTREE
-) {{.DB_TABLE_OPTIONS}};
+) [[[.DB_TABLE_OPTIONS]]];
 
-INSERT INTO `{{.DB_SCHEMA}}`.`clearing_ledger_statuses`
+INSERT INTO `[[[.DB_SCHEMA]]]`.`clearing_ledger_statuses`
 	(label, description, withdrawable)
 VALUES
 	('Pending', 'Transaction credited but not yet withdrawable.', 0),
@@ -26,9 +26,9 @@ VALUES
 -- Clearing ledger types
 --
 
-DROP TABLE IF EXISTS `{{.DB_SCHEMA}}`.`clearing_ledger_labels`;
+DROP TABLE IF EXISTS `[[[.DB_SCHEMA]]]`.`clearing_ledger_labels`;
 
-CREATE TABLE `{{.DB_SCHEMA}}`.`clearing_ledger_labels` (
+CREATE TABLE `[[[.DB_SCHEMA]]]`.`clearing_ledger_labels` (
 	`id` SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
 	`label` TINYTEXT NOT NULL,
 	`description` TINYTEXT DEFAULT NULL,
@@ -37,9 +37,9 @@ CREATE TABLE `{{.DB_SCHEMA}}`.`clearing_ledger_labels` (
 	`deleted_at` DATETIME(3) NULL DEFAULT NULL,
 	PRIMARY KEY (`id`),
 	KEY `clearing_ledger_labels_deleted_at_idx` (`deleted_at`) USING BTREE
-) {{.DB_TABLE_OPTIONS}};
+) [[[.DB_TABLE_OPTIONS]]];
 
-INSERT INTO `{{.DB_SCHEMA}}`.`clearing_ledger_labels`
+INSERT INTO `[[[.DB_SCHEMA]]]`.`clearing_ledger_labels`
 	(label, description)
 VALUES
 	('Undefined', 'No label given to the transaction.'),
@@ -54,9 +54,9 @@ VALUES
 -- Clearing ledger
 --
 
-DROP TABLE IF EXISTS `{{.DB_SCHEMA}}`.`clearing_ledger`;
+DROP TABLE IF EXISTS `[[[.DB_SCHEMA]]]`.`clearing_ledger`;
 
-CREATE TABLE `{{.DB_SCHEMA}}`.`clearing_ledger` (
+CREATE TABLE `[[[.DB_SCHEMA]]]`.`clearing_ledger` (
 	`id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
 	`user_id` INT(11) NOT NULL,
 	-- Handling of references is TBD
@@ -78,5 +78,5 @@ CREATE TABLE `{{.DB_SCHEMA}}`.`clearing_ledger` (
 	CONSTRAINT `clearing_ledger_clearing_token_id_fk` FOREIGN KEY (`clearing_token_id`) REFERENCES `clearing_tokens` (`id`) ON UPDATE CASCADE,
 	CONSTRAINT `clearing_ledger_clearing_ledger_status_id_fk` FOREIGN KEY (`clearing_ledger_status_id`) REFERENCES `clearing_ledger_statuses` (`id`) ON UPDATE CASCADE,
 	CONSTRAINT `clearing_ledger_clearing_ledger_label_id_fk` FOREIGN KEY (`clearing_ledger_label_id`) REFERENCES `clearing_ledger_labels` (`id`) ON UPDATE CASCADE
-) {{.DB_TABLE_OPTIONS}};
+) [[[.DB_TABLE_OPTIONS]]];
 

@@ -2,9 +2,9 @@
 -- Clearing token types
 --
 
-DROP TABLE IF EXISTS `{{.DB_SCHEMA}}`.`clearing_token_types`;
+DROP TABLE IF EXISTS `[[[.DB_SCHEMA]]]`.`clearing_token_types`;
 
-CREATE TABLE `{{.DB_SCHEMA}}`.`clearing_token_types` (
+CREATE TABLE `[[[.DB_SCHEMA]]]`.`clearing_token_types` (
 	`id` MEDIUMINT UNSIGNED NOT NULL AUTO_INCREMENT,
 	`label` TINYTEXT NOT NULL,
 	`description` TINYTEXT DEFAULT NULL,
@@ -13,9 +13,9 @@ CREATE TABLE `{{.DB_SCHEMA}}`.`clearing_token_types` (
 	`deleted_at` DATETIME(3) NULL DEFAULT NULL,
 	PRIMARY KEY (`id`),
 	KEY `clearing_token_types_deleted_at_idx` (`deleted_at`) USING BTREE
-) {{.DB_TABLE_OPTIONS}};
+) [[[.DB_TABLE_OPTIONS]]];
 
-INSERT INTO `{{.DB_SCHEMA}}`.`clearing_token_types`
+INSERT INTO `[[[.DB_SCHEMA]]]`.`clearing_token_types`
 	(label, description)
 VALUES
 	('Fiat', 'Government-issued, legal tender with no intrinsic value; value relies on public trust.'),
@@ -29,9 +29,9 @@ VALUES
 -- Clearing tokens
 --
 
-DROP TABLE IF EXISTS `{{.DB_SCHEMA}}`.`clearing_tokens`;
+DROP TABLE IF EXISTS `[[[.DB_SCHEMA]]]`.`clearing_tokens`;
 
-CREATE TABLE `{{.DB_SCHEMA}}`.`clearing_tokens` (
+CREATE TABLE `[[[.DB_SCHEMA]]]`.`clearing_tokens` (
 	`id` MEDIUMINT UNSIGNED NOT NULL AUTO_INCREMENT,
 	`label` TINYTEXT NOT NULL,
 	`symbol` VARCHAR(16) NOT NULL,
@@ -44,9 +44,9 @@ CREATE TABLE `{{.DB_SCHEMA}}`.`clearing_tokens` (
 	KEY `clearing_tokens_deleted_at_idx` (`deleted_at`) USING BTREE,
 	UNIQUE KEY `clearing_tokens_symbol_clearing_token_type_id_idx` (symbol, clearing_token_type_id),
 	CONSTRAINT `clearing_tokens_clearing_token_type_id_fk` FOREIGN KEY (`clearing_token_type_id`) REFERENCES `clearing_token_types` (`id`) ON UPDATE CASCADE
-) {{.DB_TABLE_OPTIONS}};
+) [[[.DB_TABLE_OPTIONS]]];
 
-INSERT INTO `{{.DB_SCHEMA}}`.`clearing_tokens`
+INSERT INTO `[[[.DB_SCHEMA]]]`.`clearing_tokens`
 	(label, symbol, description, clearing_token_type_id)
 VALUES
 	('US dollar', 'USD', 'United States Dollar: Official U.S. fiat currency', 1),

@@ -1,176 +1,176 @@
 version: "3.3"
 
 networks:
-  {{.DOCKER_NETWORK}}:
+  [[[.DOCKER_NETWORK]]]:
     external: true
-    # name: {{.DOCKER_NETWORK}}
+    # name: [[[.DOCKER_NETWORK]]]
 
 services:
-  {{.ADMINER_NAME}}:
+  [[[.ADMINER_NAME]]]:
     depends_on:
-      - {{.DB_NAME}}
-    hostname: {{.ADMINER_NAME}}
-    image: {{.ADMINER_IMAGE}}
+      - [[[.DB_NAME]]]
+    hostname: [[[.ADMINER_NAME]]]
+    image: [[[.ADMINER_IMAGE]]]
     labels:
-      service: {{.ADMINER_NAME}}
+      service: [[[.ADMINER_NAME]]]
     networks:
-      {{.DOCKER_NETWORK}}:
+      [[[.DOCKER_NETWORK]]]:
         # ipv4_address: 10.96.0.4
         aliases:
-          - {{.ADMINER_NAME}}
+          - [[[.ADMINER_NAME]]]
     ports:
-      - {{.ADMINER_PORT}}:8080
+      - [[[.ADMINER_PORT]]]:8080
     restart: always
-  {{.API_NAME}}:
-    command: /app/{{.API_NAME}}
+  [[[.API_NAME]]]:
+    command: /app/[[[.API_NAME]]]
     depends_on:
-      - {{.DB_NAME}}
+      - [[[.DB_NAME]]]
     environment:
-      API_KEY: {{.API_KEY}}
-      API_LOG_PREFIX: '{{.API_LOG_PREFIX}}'
-      API_LOG_SEVERITY: {{.API_LOG_SEVERITY}}
-      API_FIBER_ADDRESS: {{.API_FIBER_ADDRESS}}
-      API_FIBER_LOGFORMAT: "{{.API_FIBER_LOGFORMAT}}"
-      API_FIBER_TIMEFORMAT: "{{.API_FIBER_TIMEFORMAT}}"
-      API_FIBER_METRICS: {{.API_FIBER_METRICS}}
-      API_CACHE_PASSWORD: {{.API_CACHE_PASSWORD}}
-      API_CACHE_HOST: {{.API_CACHE_HOST}}
-      API_DB_HOST: {{.DB_NAME}}
-      API_DB_PORT: {{.API_DB_PORT}}
-      API_DB_PARAMS: {{.API_DB_PARAMS}}
-      API_DB_SCHEMA: {{.API_DB_SCHEMA}}
-      API_DB_USER: {{.API_DB_USER}}
-      API_DB_PASSWORD: {{.API_DB_PASSWORD}}
-      API_SWAGGER_BASEPATH: {{.API_SWAGGER_BASEPATH}}
-      API_SWAGGER_FILEPATH: {{.API_SWAGGER_FILEPATH}}
-      API_SWAGGER_PATH: {{.API_SWAGGER_PATH}}
-      API_SWAGGER_TITLE: "{{.API_SWAGGER_TITLE}}"
+      API_KEY: [[[.API_KEY]]]
+      API_LOG_PREFIX: '[[[.API_LOG_PREFIX]]]'
+      API_LOG_SEVERITY: [[[.API_LOG_SEVERITY]]]
+      API_FIBER_ADDRESS: [[[.API_FIBER_ADDRESS]]]
+      API_FIBER_LOGFORMAT: "[[[.API_FIBER_LOGFORMAT]]]"
+      API_FIBER_TIMEFORMAT: "[[[.API_FIBER_TIMEFORMAT]]]"
+      API_FIBER_METRICS: [[[.API_FIBER_METRICS]]]
+      API_CACHE_PASSWORD: [[[.API_CACHE_PASSWORD]]]
+      API_CACHE_HOST: [[[.API_CACHE_HOST]]]
+      API_DB_HOST: [[[.DB_NAME]]]
+      API_DB_PORT: [[[.API_DB_PORT]]]
+      API_DB_PARAMS: [[[.API_DB_PARAMS]]]
+      API_DB_SCHEMA: [[[.API_DB_SCHEMA]]]
+      API_DB_USER: [[[.API_DB_USER]]]
+      API_DB_PASSWORD: [[[.API_DB_PASSWORD]]]
+      API_SWAGGER_BASEPATH: [[[.API_SWAGGER_BASEPATH]]]
+      API_SWAGGER_FILEPATH: [[[.API_SWAGGER_FILEPATH]]]
+      API_SWAGGER_PATH: [[[.API_SWAGGER_PATH]]]
+      API_SWAGGER_TITLE: "[[[.API_SWAGGER_TITLE]]]"
       # make passwords secrets
-    hostname: {{.API_NAME}}
-    image: {{.API_IMAGE}}
+    hostname: [[[.API_NAME]]]
+    image: [[[.API_IMAGE]]]
     labels:
-      service: {{.API_NAME}}
+      service: [[[.API_NAME]]]
     networks:
-      {{.DOCKER_NETWORK}}:
+      [[[.DOCKER_NETWORK]]]:
         # ipv4_address: 10.96.0.4
         aliases:
-          - {{.API_NAME}}
+          - [[[.API_NAME]]]
     ports:
-      - {{.API_PORT}}:{{.API_PORT}}
+      - [[[.API_PORT]]]:[[[.API_PORT]]]
     restart: always
     volumes:
-      - {{.PATH_BIN}}/{{.API_NAME}}-linux:/app/{{.API_NAME}}
-      - {{.PATH_WORKBENCH}}/{{.API_SWAGGER_FILEPATH}}:/app/{{.API_SWAGGER_FILEPATH}}
+      - [[[.PATH_BIN]]]/[[[.API_NAME]]]-linux:/app/[[[.API_NAME]]]
+      - [[[.PATH_WORKBENCH]]]/[[[.API_SWAGGER_FILEPATH]]]:/app/[[[.API_SWAGGER_FILEPATH]]]
     working_dir: /app
-  {{.CLR_NAME}}:
-    command: /app/{{.CLR_NAME}}
+  [[[.CLR_NAME]]]:
+    command: /app/[[[.CLR_NAME]]]
     depends_on:
-      - {{.MQ_NAME}}
-      - {{.API_NAME}}
+      - [[[.MQ_NAME]]]
+      - [[[.API_NAME]]]
     environment:
-      CLR_API_KEY: {{.CLR_API_KEY}}
-      CLR_LOG_PREFIX: "{{.CLR_LOG_PREFIX}}"
-      CLR_LOG_SEVERITY: {{.CLR_LOG_SEVERITY}}
-      CLR_MQ_EXCHANGE: {{.CLR_MQ_EXCHANGE}}
-      CLR_MQ_HOST: {{.CLR_MQ_HOST}}
-      CLR_MQ_PASSWORD: {{.CLR_MQ_PASSWORD}}
-      CLR_MQ_PORT: {{.CLR_MQ_PORT}}
-      CLR_MQ_ROUTING: {{.CLR_MQ_ROUTING}}
-      CLR_MQ_QUEUE: {{.CLR_MQ_QUEUE}}
-      CLR_MQ_USER: {{.CLR_MQ_USER}}
+      CLR_API_KEY: [[[.CLR_API_KEY]]]
+      CLR_LOG_PREFIX: "[[[.CLR_LOG_PREFIX]]]"
+      CLR_LOG_SEVERITY: [[[.CLR_LOG_SEVERITY]]]
+      CLR_MQ_EXCHANGE: [[[.CLR_MQ_EXCHANGE]]]
+      CLR_MQ_HOST: [[[.CLR_MQ_HOST]]]
+      CLR_MQ_PASSWORD: [[[.CLR_MQ_PASSWORD]]]
+      CLR_MQ_PORT: [[[.CLR_MQ_PORT]]]
+      CLR_MQ_ROUTING: [[[.CLR_MQ_ROUTING]]]
+      CLR_MQ_QUEUE: [[[.CLR_MQ_QUEUE]]]
+      CLR_MQ_USER: [[[.CLR_MQ_USER]]]
       # make passwords secrets
-    hostname: {{.CLR_NAME}}
-    image: {{.CLR_IMAGE}}
+    hostname: [[[.CLR_NAME]]]
+    image: [[[.CLR_IMAGE]]]
     labels:
-      service: {{.CLR_NAME}}
+      service: [[[.CLR_NAME]]]
     networks:
-      {{.DOCKER_NETWORK}}:
+      [[[.DOCKER_NETWORK]]]:
         # ipv4_address: 10.96.0.4
         aliases:
-          - {{.CLR_NAME}}
+          - [[[.CLR_NAME]]]
     restart: always
     volumes:
-      - {{.PATH_BIN}}/{{.CLR_NAME}}-linux:/app/{{.CLR_NAME}}
+      - [[[.PATH_BIN]]]/[[[.CLR_NAME]]]-linux:/app/[[[.CLR_NAME]]]
     working_dir: /app
-  {{.DB_NAME}}:
+  [[[.DB_NAME]]]:
     environment:
       # - MARIADB_ROOT_PASSWORD=example
-      - MARIADB_ROOT_PASSWORD_HASH={{.DB_ROOT}}
-    hostname: {{.DB_NAME}}
-    image: {{.DB_IMAGE}}
+      - MARIADB_ROOT_PASSWORD_HASH=[[[.DB_ROOT]]]
+    hostname: [[[.DB_NAME]]]
+    image: [[[.DB_IMAGE]]]
     labels:
-      service: {{.DB_NAME}}
+      service: [[[.DB_NAME]]]
     networks:
-      {{.DOCKER_NETWORK}}:
+      [[[.DOCKER_NETWORK]]]:
         # ipv4_address: 10.96.0.3
         aliases:
-          - {{.DB_NAME}}
-          - {{.DB_FQDN}}
+          - [[[.DB_NAME]]]
+          - [[[.DB_FQDN]]]
     ports:
-      - {{.DB_PORT}}:3306
+      - [[[.DB_PORT]]]:3306
     restart: always
     volumes:
-      - {{.PATH_WORKBENCH}}/db/etc:/etc/mysql
-      - {{.PATH_WORKBENCH}}/db/data:/var/lib/mysql
-      - {{.PATH_WORKBENCH}}/db/init:/docker-entrypoint-initdb.d
-  {{.CACHE_NAME}}:
-    hostname: {{.CACHE_NAME}}
-    image: {{.CACHE_IMG}}
+      - [[[.PATH_WORKBENCH]]]/db/etc:/etc/mysql
+      - [[[.PATH_WORKBENCH]]]/db/data:/var/lib/mysql
+      - [[[.PATH_WORKBENCH]]]/db/init:/docker-entrypoint-initdb.d
+  [[[.CACHE_NAME]]]:
+    hostname: [[[.CACHE_NAME]]]
+    image: [[[.CACHE_IMG]]]
     # environment:
     #   - REDIS_ARGS="--requirepass XXXXX"
     labels:
-      service: {{.CACHE_NAME}}
+      service: [[[.CACHE_NAME]]]
     networks:
-      {{.DOCKER_NETWORK}}:
+      [[[.DOCKER_NETWORK]]]:
         # ipv4_address: 10.96.0.5
         aliases:
-          - {{.CACHE_NAME}}
-          - {{.CACHE_FQDN}}
+          - [[[.CACHE_NAME]]]
+          - [[[.CACHE_FQDN]]]
     ports:
-      - {{.CACHE_PORT_REDIS}}:6379
-      - {{.CACHE_PORT_INSIGHT}}:8001
+      - [[[.CACHE_PORT_REDIS]]]:6379
+      - [[[.CACHE_PORT_INSIGHT]]]:8001
     restart: always
     volumes:
-      - {{.PATH_WORKBENCH}}/cache/redis-stack.conf:/redis-stack.conf
-      - {{.PATH_WORKBENCH}}/cache/data:/data
-      - {{.PATH_WORKBENCH}}/cache/data:/db
-  {{.CDC_NAME}}:
+      - [[[.PATH_WORKBENCH]]]/cache/redis-stack.conf:/redis-stack.conf
+      - [[[.PATH_WORKBENCH]]]/cache/data:/data
+      - [[[.PATH_WORKBENCH]]]/cache/data:/db
+  [[[.CDC_NAME]]]:
     command: bin/maxwell --config /app/config.properties
     depends_on:
-      - {{.DB_NAME}}
-      - {{.MQ_NAME}}
-      # - {{.CACHE_NAME}}
-    hostname: {{.CDC_NAME}}
-    image: {{.CDC_IMAGE}}
+      - [[[.DB_NAME]]]
+      - [[[.MQ_NAME]]]
+      # - [[[.CACHE_NAME]]]
+    hostname: [[[.CDC_NAME]]]
+    image: [[[.CDC_IMAGE]]]
     labels:
-      service: {{.CDC_NAME}}
+      service: [[[.CDC_NAME]]]
     networks:
-      {{.DOCKER_NETWORK}}:
+      [[[.DOCKER_NETWORK]]]:
         # ipv4_address: 10.96.0.3
         aliases:
-          - {{.CDC_NAME}}
-          - {{.CDC_FQDN}}
+          - [[[.CDC_NAME]]]
+          - [[[.CDC_FQDN]]]
     restart: always
     volumes:
-      - {{.PATH_WORKBENCH}}/cdc/config.properties:/app/config.properties
-  {{.MQ_NAME}}:
+      - [[[.PATH_WORKBENCH]]]/cdc/config.properties:/app/config.properties
+  [[[.MQ_NAME]]]:
     environment:
-      - RABBITMQ_DEFAULT_USER={{.MQ_USER}}
-      - RABBITMQ_DEFAULT_PASS={{.MQ_PASSWORD}}
-    hostname: {{.MQ_NAME}}
-    image: {{.MQ_IMG}}
+      - RABBITMQ_DEFAULT_USER=[[[.MQ_USER]]]
+      - RABBITMQ_DEFAULT_PASS=[[[.MQ_PASSWORD]]]
+    hostname: [[[.MQ_NAME]]]
+    image: [[[.MQ_IMG]]]
     labels:
-      service: {{.MQ_NAME}}
+      service: [[[.MQ_NAME]]]
     networks:
-      {{.DOCKER_NETWORK}}:
+      [[[.DOCKER_NETWORK]]]:
         # ipv4_address: 10.96.0.5
         aliases:
-          - {{.MQ_NAME}}
-          - {{.MQ_FQDN}}
+          - [[[.MQ_NAME]]]
+          - [[[.MQ_FQDN]]]
     ports:
-      - {{.MQ_PORT_MQ}}:5672
-      - {{.MQ_PORT_MGMT}}:15672
+      - [[[.MQ_PORT_MQ]]]:5672
+      - [[[.MQ_PORT_MGMT]]]:15672
     restart: always
     volumes:
-      - {{.PATH_WORKBENCH}}/mq/etc:/etc/rabbitmq/
-      - {{.PATH_WORKBENCH}}/mq/data:/var/lib/rabbitmq
+      - [[[.PATH_WORKBENCH]]]/mq/etc:/etc/rabbitmq/
+      - [[[.PATH_WORKBENCH]]]/mq/data:/var/lib/rabbitmq

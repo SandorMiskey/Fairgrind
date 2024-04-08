@@ -1,4 +1,4 @@
-// region: packages
+// packages {{{
 
 package main
 
@@ -18,8 +18,8 @@ import (
 	"gorm.io/gorm"
 )
 
-// endregion: packages
-// region: const
+// packages }}}
+// const {{{
 
 var (
 	Action string = "templates"
@@ -36,11 +36,11 @@ const (
 	PATH_WORKBENCH string = "PATH_WORKBENCH"
 )
 
-// endregion
+// endregion }}}
 
 func main() {
 
-	// region: read .env
+	// read .env {{{
 
 	// env, err := godotenv.Read()
 	// if err != nil {
@@ -48,28 +48,29 @@ func main() {
 	// }
 	env := utils.GetEnv()
 
-	// endregion: read .env
-	// region: default action
+	// read .env }}}
+	// default action {{{
 
 	if len(os.Args) > 1 {
 		Action = os.Args[1]
 	}
 
-	// endregion: default action
-	// region: templates
+	// default action }}}
+	// templates {{{
 
 	if Action == "templates" {
+		delims := strings.Split(env["GO_TEMP_DELIMS"], ",")
 		err := filepath.Walk(env["PATH_TEMPLATES"], func(path string, info os.FileInfo, err error) error {
 
-			// region: can I walk here
+			// can I walk here {{{
 
 			if err != nil {
 				fmt.Println(err) // can't walk here,
 				return nil       // but continue walking elsewhere
 			}
 
-			// endregion
-			// region: target path
+			// endregion }}}
+			// target path {{{
 
 			var builder strings.Builder
 			var target string
@@ -79,8 +80,8 @@ func main() {
 
 			target = builder.String()
 
-			// endregion
-			// region: apply template
+			// endregion }}}
+			// apply template {{{
 
 			if info.IsDir() {
 				_, err := os.Stat(target)
@@ -94,7 +95,7 @@ func main() {
 				}
 			} else {
 
-				// region: read file
+				// read file {{{
 
 				content, err := os.ReadFile(path)
 				if err != nil {
@@ -102,11 +103,15 @@ func main() {
 				}
 				contentType := http.DetectContentType(content)
 
-				// endregion
-				// region: process
+				// endregion }}}
+				// process {{{
 
 				if strings.HasPrefix(contentType, "text/plain") {
-					temp, err := template.New("template").Parse(string(content))
+					temp := template.New("template")
+					if len(delims) == 2 {
+						temp.Delims(delims[0], delims[1])
+					}
+					temp.Parse(string(content))
 					if err != nil {
 						utils.Panic(err)
 					}
@@ -127,8 +132,8 @@ func main() {
 					return nil
 				}
 
-				// endregion
-				// region: copy
+				// endregion }}}
+				// copy {{{
 
 				sourceFile, err := os.Open(path)
 				if err != nil {
@@ -149,13 +154,13 @@ func main() {
 
 				fmt.Printf("file copied: %s -> %s (%s)\n", path, target, contentType)
 
-				// endregion
+				// endregion }}}
 
 			}
 
 			return nil
 
-			// endregion
+			// endregion }}}
 
 		})
 		if err != nil {
@@ -163,8 +168,8 @@ func main() {
 		}
 	}
 
-	// endregion: templates
-	// region: gorm init
+	// templates }}}
+	// gorm init {{{
 
 	if Action == "gorm" {
 		dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?%s", env[DB_USER], env[DB_PASSWORD], env[DB_HOST], env[DB_PORT], env[DB_SCHEMA], env[DB_PARAMS])
@@ -190,6 +195,6 @@ func main() {
 		db.AutoMigrate(&models.ClearingToken{})
 	}
 
-	// endregion
+	// endregion }}}
 
 }

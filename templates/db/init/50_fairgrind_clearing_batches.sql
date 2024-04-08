@@ -2,9 +2,9 @@
 -- Clearing batch statuses
 --
 
-DROP TABLE IF EXISTS `{{.DB_SCHEMA}}`.`clearing_batch_statuses`;
+DROP TABLE IF EXISTS `[[[.DB_SCHEMA]]]`.`clearing_batch_statuses`;
 
-CREATE TABLE `{{.DB_SCHEMA}}`.`clearing_batch_statuses` (
+CREATE TABLE `[[[.DB_SCHEMA]]]`.`clearing_batch_statuses` (
   `id` SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `label` TINYTEXT NOT NULL,
   `description` TINYTEXT DEFAULT NULL,
@@ -15,9 +15,9 @@ CREATE TABLE `{{.DB_SCHEMA}}`.`clearing_batch_statuses` (
   PRIMARY KEY (`id`),
   KEY `clearing_batch_types_deleted_at_idx` (`deleted_at`) USING BTREE,
   CONSTRAINT `clearing_batch_statuses_clearing_ledger_status_id_fk` FOREIGN KEY (`clearing_ledger_status_id`) REFERENCES `clearing_ledger_statuses` (`id`) ON UPDATE CASCADE
-) {{.DB_TABLE_OPTIONS}};
+) [[[.DB_TABLE_OPTIONS]]];
 
-INSERT INTO `{{.DB_SCHEMA}}`.`clearing_batch_statuses`
+INSERT INTO `[[[.DB_SCHEMA]]]`.`clearing_batch_statuses`
   (label, description, clearing_ledger_status_id)
 VALUES
   ('Unpublished', 'The batch is being prepared and/or awaiting deposit payment.', NULL),
@@ -31,9 +31,9 @@ VALUES
 -- Clearing batch types
 --
 
-DROP TABLE IF EXISTS `{{.DB_SCHEMA}}`.`clearing_batch_types`;
+DROP TABLE IF EXISTS `[[[.DB_SCHEMA]]]`.`clearing_batch_types`;
 
-CREATE TABLE `{{.DB_SCHEMA}}`.`clearing_batch_types` (
+CREATE TABLE `[[[.DB_SCHEMA]]]`.`clearing_batch_types` (
   `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `label` TINYTEXT NOT NULL,
   `description` TINYTEXT DEFAULT NULL,
@@ -43,9 +43,9 @@ CREATE TABLE `{{.DB_SCHEMA}}`.`clearing_batch_types` (
   `deleted_at` DATETIME(3) NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `clearing_batch_types_deleted_at_idx` (`deleted_at`) USING BTREE
-) {{.DB_TABLE_OPTIONS}};
+) [[[.DB_TABLE_OPTIONS]]];
 
-INSERT INTO {{.DB_SCHEMA}}.clearing_batch_types 
+INSERT INTO [[[.DB_SCHEMA]]].clearing_batch_types 
   (label,description,multiplier)
 VALUES
   ('Exam', 'To be used during the testing or training of a Grinder', 0.0),
@@ -57,9 +57,9 @@ VALUES
 -- Clearing batches
 --
 
-DROP TABLE IF EXISTS `{{.DB_SCHEMA}}`.`clearing_batches`;
+DROP TABLE IF EXISTS `[[[.DB_SCHEMA]]]`.`clearing_batches`;
 
-CREATE TABLE `{{.DB_SCHEMA}}`.`clearing_batches` (
+CREATE TABLE `[[[.DB_SCHEMA]]]`.`clearing_batches` (
   `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `project_id` INT(11) NOT NULL,
   `user_id` INT(11) NOT NULL,
@@ -76,5 +76,5 @@ CREATE TABLE `{{.DB_SCHEMA}}`.`clearing_batches` (
   CONSTRAINT `clearing_batches_clearing_batch_types_fk` FOREIGN KEY (`clearing_batch_type_id`) REFERENCES `clearing_batch_types` (`id`) ON UPDATE CASCADE,
   CONSTRAINT `clearing_batches_clearing_batch_statuses_fk` FOREIGN KEY (`clearing_batch_status_id`) REFERENCES `clearing_batch_statuses` (`id`) ON UPDATE CASCADE,
   CONSTRAINT `clearing_batches_projects_fk` FOREIGN KEY (`project_id`) REFERENCES `projects` (`id`) ON UPDATE CASCADE
-) {{.DB_TABLE_OPTIONS}};
+) [[[.DB_TABLE_OPTIONS]]];
 

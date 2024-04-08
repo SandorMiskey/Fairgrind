@@ -48,7 +48,7 @@ down:
 init: clean build_init
 	@. $(ENV) && echo "${GUM_PREFIX}executing ${PATH_BIN}/init templates"
 	@. $(ENV) && ${PATH_BIN}/init
-	-$(MAKE) up_infra
+	@$(MAKE) up_infra
 	@. $(ENV) && echo "${GUM_PREFIX}executing ${PATH_BIN}/init gorm"
 	@# . $(ENV) && gum spin --title "waiting for services for ${DB_INIT_TIMEOUT}s..." -- sleep ${DB_INIT_TIMEOUT}
 	@# . $(ENV) && ${PATH_BIN}/init gorm

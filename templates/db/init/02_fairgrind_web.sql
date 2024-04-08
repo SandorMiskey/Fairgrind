@@ -14,7 +14,7 @@
  Date: 04/04/2024 16:48:26
 */
 
-USE `{{.DB_SCHEMA}}`;
+USE `[[[.DB_SCHEMA]]]`;
 
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;

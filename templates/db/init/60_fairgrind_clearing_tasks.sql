@@ -1,9 +1,9 @@
 --
 -- Clearing task statuses
 --
-DROP TABLE IF EXISTS `{{.DB_SCHEMA}}`.`clearing_task_statuses`;
+DROP TABLE IF EXISTS `[[[.DB_SCHEMA]]]`.`clearing_task_statuses`;
 
-CREATE TABLE `{{.DB_SCHEMA}}`.`clearing_task_statuses` (
+CREATE TABLE `[[[.DB_SCHEMA]]]`.`clearing_task_statuses` (
   `id` SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `label` TINYTEXT NOT NULL,
   `description` TINYTEXT DEFAULT NULL,
@@ -14,9 +14,9 @@ CREATE TABLE `{{.DB_SCHEMA}}`.`clearing_task_statuses` (
   `deleted_at` DATETIME(3) NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `clearing_task_statuses_deleted_at_idx` (`deleted_at`) USING BTREE
-) {{.DB_TABLE_OPTIONS}};
+) [[[.DB_TABLE_OPTIONS]]];
 
-INSERT INTO `{{.DB_SCHEMA}}`.`clearing_task_statuses`
+INSERT INTO `[[[.DB_SCHEMA]]]`.`clearing_task_statuses`
   (label, description, payable, parent_payable)
 VALUES
   ('Awaiting review', 'Grinder has completed the annotation or uploaded raw data and is awaiting review.', 0, 0),
@@ -29,9 +29,9 @@ VALUES
 -- Clearing task types
 --
 
-DROP TABLE IF EXISTS `{{.DB_SCHEMA}}`.`clearing_task_types`;
+DROP TABLE IF EXISTS `[[[.DB_SCHEMA]]]`.`clearing_task_types`;
 
-CREATE TABLE `{{.DB_SCHEMA}}`.`clearing_task_types` (
+CREATE TABLE `[[[.DB_SCHEMA]]]`.`clearing_task_types` (
   `id` SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `label` TINYTEXT NOT NULL,
   `description` TINYTEXT DEFAULT NULL,
@@ -43,9 +43,9 @@ CREATE TABLE `{{.DB_SCHEMA}}`.`clearing_task_types` (
   `deleted_at` DATETIME(3) NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `clearing_task_types_deleted_at_idx` (`deleted_at`) USING BTREE
-) {{.DB_TABLE_OPTIONS}};
+) [[[.DB_TABLE_OPTIONS]]];
 
-INSERT INTO `{{.DB_SCHEMA}}`.`clearing_task_types`
+INSERT INTO `[[[.DB_SCHEMA]]]`.`clearing_task_types`
   (label, description, task_payable, subtask_payable)
 VALUES
   ('Annotation', 'Grinder annotated a raw data.', 1, 1),
@@ -56,9 +56,9 @@ VALUES
 -- Clearing task fees
 --
 
-DROP TABLE IF EXISTS `{{.DB_SCHEMA}}`.`clearing_task_fees`;
+DROP TABLE IF EXISTS `[[[.DB_SCHEMA]]]`.`clearing_task_fees`;
 
-CREATE TABLE `{{.DB_SCHEMA}}`.`clearing_task_fees` (
+CREATE TABLE `[[[.DB_SCHEMA]]]`.`clearing_task_fees` (
   -- `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `user_id` INT(11) NOT NULL,
   `project_id` INT(11) NOT NULL,
@@ -76,13 +76,13 @@ CREATE TABLE `{{.DB_SCHEMA}}`.`clearing_task_fees` (
   CONSTRAINT `clearing_task_fees_project_id_fk` FOREIGN KEY (`project_id`) REFERENCES `projects` (`id`) ON UPDATE CASCADE,
   CONSTRAINT `clearing_task_fees_clearing_task_type_id_fk` FOREIGN KEY (`clearing_task_type_id`) REFERENCES `clearing_task_types` (`id`) ON UPDATE CASCADE,
   CONSTRAINT `clearing_task_fees_clearing_token_id_fk` FOREIGN KEY (`clearing_token_id`) REFERENCES `clearing_tokens` (`id`) ON UPDATE CASCADE
-) {{.DB_TABLE_OPTIONS}};
+) [[[.DB_TABLE_OPTIONS]]];
 
 --
 -- Clearing tasks
 --
 
-DROP TABLE IF EXISTS `{{.DB_SCHEMA}}`.`clearing_tasks`;
+DROP TABLE IF EXISTS `[[[.DB_SCHEMA]]]`.`clearing_tasks`;
 
 CREATE TABLE `fairgrind`.`clearing_tasks` (
   `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -112,5 +112,5 @@ CREATE TABLE `fairgrind`.`clearing_tasks` (
   CONSTRAINT `clearing_tasks_task_id_fk` FOREIGN KEY (`task_id`) REFERENCES `tasks` (`id`)  ON UPDATE CASCADE,
   CONSTRAINT `clearing_tasks_user_id_fk` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)  ON UPDATE CASCADE,
   CONSTRAINT `task_reject_issues_id_fk` FOREIGN KEY (`task_reject_issues_id`) REFERENCES `task_reject_issues` (`id`)  ON UPDATE CASCADE
-) {{.DB_TABLE_OPTIONS}};
+) [[[.DB_TABLE_OPTIONS]]];
 
