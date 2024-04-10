@@ -60,6 +60,7 @@ up: build_services up_infra
 	-docker network create $(DOCKER_NETWORK)
 	#$(DOCKER_COMPOSE) -f ${PATH_WORKBENCH}/docker-compose.yaml -p $(DOCKER_NETWORK) up -d ${API_NAME} ${CLR_NAME}
 	$(DOCKER_COMPOSE) -f ${PATH_WORKBENCH}/docker-compose.yaml -p $(DOCKER_NETWORK) up -d ${API_NAME}
+	@. $(ENV) && cd $(CLEARING) && GOOS="" go run *.go
 up_all: build_services
 	@. $(ENV) && echo "${GUM_PREFIX}$(DOCKER_COMPOSE) up all"
 	-docker network create $(DOCKER_NETWORK)
