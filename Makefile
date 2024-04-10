@@ -55,6 +55,9 @@ init: clean build_init
 	@. $(ENV) && echo "${GUM_PREFIX}deactivating ${PATH_BIN}/init"
 	chmod -x ${PATH_BIN}/init 
 	mv ${PATH_BIN}/init ${PATH_BIN}/init_deactivated
+push:
+	git push origin main
+	git push gitlab main
 up: build_services up_infra
 	@. $(ENV) && echo "${GUM_PREFIX}$(DOCKER_COMPOSE) up services"
 	-docker network create $(DOCKER_NETWORK)
