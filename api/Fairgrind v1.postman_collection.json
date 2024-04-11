@@ -1,0 +1,651 @@
+{
+	"info": {
+		"_postman_id": "ffeb8686-65c7-43ce-820a-1b8df812de57",
+		"name": "Fairgrind v1",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "12083801",
+		"_collection_link": "https://te-food.postman.co/workspace/Fairgrind~2aa203fe-6391-4df6-a181-e1aca96413a8/collection/12083801-ffeb8686-65c7-43ce-820a-1b8df812de57?action=share&source=collection_link&creator=12083801"
+	},
+	"item": [
+		{
+			"name": "batches",
+			"item": [
+				{
+					"name": "statuses",
+					"protocolProfileBehavior": {
+						"disableUrlEncoding": false
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{env_baseURL}}/batches/statuses",
+							"host": [
+								"{{env_baseURL}}"
+							],
+							"path": [
+								"batches",
+								"statuses"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "types",
+					"protocolProfileBehavior": {
+						"disableUrlEncoding": false
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{env_baseURL}}/batches/types",
+							"host": [
+								"{{env_baseURL}}"
+							],
+							"path": [
+								"batches",
+								"types"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "ledger",
+			"item": [
+				{
+					"name": "-",
+					"protocolProfileBehavior": {
+						"disableUrlEncoding": false
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{env_baseURL}}/ledger?user_id=1000&orm_order_by=id asc&orm_page=1&orm_limit=10",
+							"host": [
+								"{{env_baseURL}}"
+							],
+							"path": [
+								"ledger"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "2",
+									"disabled": true
+								},
+								{
+									"key": "user_id",
+									"value": "1000"
+								},
+								{
+									"key": "clearing_task_id",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "clearing_token_id",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "clearing_ledger_status_id",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "clearing_ledger_label_id",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "orm_order_by",
+									"value": "id asc"
+								},
+								{
+									"key": "orm_page",
+									"value": "1"
+								},
+								{
+									"key": "orm_limit",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "labels",
+					"protocolProfileBehavior": {
+						"disableUrlEncoding": false
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{env_baseURL}}/ledger/labels",
+							"host": [
+								"{{env_baseURL}}"
+							],
+							"path": [
+								"ledger",
+								"labels"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "statuses",
+					"protocolProfileBehavior": {
+						"disableUrlEncoding": false
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{env_baseURL}}/ledger/statuses",
+							"host": [
+								"{{env_baseURL}}"
+							],
+							"path": [
+								"ledger",
+								"statuses"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "withdraw",
+					"protocolProfileBehavior": {
+						"disableUrlEncoding": false
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"amount\": 10,\n    \"clearing_token_id\": 5,\n    \"user_id\": 1000\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{env_baseURL}}/ledger/withdraw",
+							"host": [
+								"{{env_baseURL}}"
+							],
+							"path": [
+								"ledger",
+								"withdraw"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "credit",
+					"protocolProfileBehavior": {
+						"disableUrlEncoding": false
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"amount\": 10,\n    \"clearing_ledger_label_id\": 1,\n    \"clearing_ledger_status_id\": 1,\n    \"clearing_task_id\": 3,\n    \"clearing_token_id\": 5,\n    \"reference\": \"api test\",\n    \"user_id\": 1000\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{env_baseURL}}/ledger/credit",
+							"host": [
+								"{{env_baseURL}}"
+							],
+							"path": [
+								"ledger",
+								"credit"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "tasks",
+			"item": [
+				{
+					"name": "-",
+					"protocolProfileBehavior": {
+						"disableUrlEncoding": false
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{env_baseURL}}/tasks?orm_order_by=clearing_batch_id desc, id desc&orm_page=1&orm_size=10",
+							"host": [
+								"{{env_baseURL}}"
+							],
+							"path": [
+								"tasks"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "2",
+									"disabled": true
+								},
+								{
+									"key": "clearing_batch_id",
+									"value": "7",
+									"disabled": true
+								},
+								{
+									"key": "clearing_task_id",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "clearing_task_status_id",
+									"value": "2",
+									"disabled": true
+								},
+								{
+									"key": "clearing_task_type_id",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "user_id",
+									"value": "1000",
+									"disabled": true
+								},
+								{
+									"key": "orm_order_by",
+									"value": "clearing_batch_id desc, id desc"
+								},
+								{
+									"key": "orm_page",
+									"value": "1"
+								},
+								{
+									"key": "orm_size",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "-",
+					"protocolProfileBehavior": {
+						"disableUrlEncoding": false
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "[\n    {\n        \"clearing_batch_id\": 7,\n        \"clearing_task_status_id\": 1,\n        \"clearing_task_type_id\": 1,\n        \"output\": \"[ { \\\"foo\\\": \\\"bar\\\" } ]\",\n        \"task_id\": 384,\n        \"user_id\": 1000\n    },\n    {\n        \"id\": 0,\n        \"clearing_batch_id\": 9,\n        \"clearing_task_status_id\": 1,\n        \"clearing_task_type_id\": 1,\n        \"clearing_task_id\": 1,\n        \"output\": \"[ { \\\"quux\\\": \\\"bam\\\" } ]\",\n        \"task_id\": 384,\n        \"user_id\": 1000\n    }\n]",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{env_baseURL}}/tasks",
+							"host": [
+								"{{env_baseURL}}"
+							],
+							"path": [
+								"tasks"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "fees",
+					"protocolProfileBehavior": {
+						"disableUrlEncoding": false
+					},
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"clearing_task_type_id\": 2,\n    \"clearing_token_id\": 2,\n    \"project_id\": 1000,\n    \"user_id\": 1000\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{env_baseURL}}/tasks/fees",
+							"host": [
+								"{{env_baseURL}}"
+							],
+							"path": [
+								"tasks",
+								"fees"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "fees",
+					"protocolProfileBehavior": {
+						"disableUrlEncoding": false
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{env_baseURL}}/tasks/fees?user_id=1000",
+							"host": [
+								"{{env_baseURL}}"
+							],
+							"path": [
+								"tasks",
+								"fees"
+							],
+							"query": [
+								{
+									"key": "user_id",
+									"value": "1000"
+								},
+								{
+									"key": "project_id",
+									"value": "1000",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "fees",
+					"protocolProfileBehavior": {
+						"disableUrlEncoding": false
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"clearing_task_type_id\": 1,\n    \"clearing_token_id\": 1,\n    \"project_id\": 1000,\n    \"subtask_fee\": 0.5,\n    \"task_fee\": 1.123,\n    \"user_id\": 1000\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{env_baseURL}}/tasks/fees",
+							"host": [
+								"{{env_baseURL}}"
+							],
+							"path": [
+								"tasks",
+								"fees"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "statuses",
+					"protocolProfileBehavior": {
+						"disableUrlEncoding": false
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{env_baseURL}}/tasks/statuses",
+							"host": [
+								"{{env_baseURL}}"
+							],
+							"path": [
+								"tasks",
+								"statuses"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "types",
+					"protocolProfileBehavior": {
+						"disableUrlEncoding": false
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{env_baseURL}}/tasks/types",
+							"host": [
+								"{{env_baseURL}}"
+							],
+							"path": [
+								"tasks",
+								"types"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "tokens",
+			"item": [
+				{
+					"name": "-",
+					"protocolProfileBehavior": {
+						"disableUrlEncoding": false
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{env_baseURL}}/tokens",
+							"host": [
+								"{{env_baseURL}}"
+							],
+							"path": [
+								"tokens"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "types",
+					"protocolProfileBehavior": {
+						"disableUrlEncoding": false
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{env_baseURL}}/tokens/types",
+							"host": [
+								"{{env_baseURL}}"
+							],
+							"path": [
+								"tokens",
+								"types"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "wallets",
+			"item": [
+				{
+					"name": "summed",
+					"protocolProfileBehavior": {
+						"disableUrlEncoding": false
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{env_baseURL}}/wallets/summed?user_id=1000",
+							"host": [
+								"{{env_baseURL}}"
+							],
+							"path": [
+								"wallets",
+								"summed"
+							],
+							"query": [
+								{
+									"key": "user_id",
+									"value": "1000"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "detailed",
+					"protocolProfileBehavior": {
+						"disableUrlEncoding": false
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{env_baseURL}}/wallets/detailed?clearing_ledger_user_id=1000&clearing_ledger_label_label=Task&orm_order_by=clearing_ledger_amount_sum",
+							"host": [
+								"{{env_baseURL}}"
+							],
+							"path": [
+								"wallets",
+								"detailed"
+							],
+							"query": [
+								{
+									"key": "clearing_ledger_user_id",
+									"value": "1000"
+								},
+								{
+									"key": "clearing_ledger_status_withdrawable",
+									"value": "true",
+									"disabled": true
+								},
+								{
+									"key": "clearing_token_symbol",
+									"value": "USD",
+									"disabled": true
+								},
+								{
+									"key": "clearing_ledger_label_id",
+									"value": null,
+									"disabled": true
+								},
+								{
+									"key": "clearing_ledger_label_label",
+									"value": "Task"
+								},
+								{
+									"key": "project_id",
+									"value": null,
+									"disabled": true
+								},
+								{
+									"key": "project_name",
+									"value": null,
+									"disabled": true
+								},
+								{
+									"key": "orm_order_by",
+									"value": "clearing_ledger_amount_sum"
+								},
+								{
+									"key": "orm_page",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "orm_limit",
+									"value": "10",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "swagger",
+			"protocolProfileBehavior": {
+				"disableUrlEncoding": false
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{env_baseURL}}/swagger",
+					"host": [
+						"{{env_baseURL}}"
+					],
+					"path": [
+						"swagger"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"pm.request.headers.add({ ",
+					"    key: \"Authorization\",",
+					"    value: \"Bearer {{env_apiKey}}\" ",
+					"});"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
