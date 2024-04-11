@@ -1,6 +1,4 @@
---
--- Project and users
---
+-- Project and users {{{
 
 INSERT INTO fairgrind.users
   (id, first_name, last_name, email, password, birth_year, country_id)
@@ -13,9 +11,8 @@ INSERT INTO fairgrind.projects
 VALUES
   ([[[.DB_TEMPLATE_PROJECT]]], [[[.DB_TEMPLATE_USER1]]], 'Clearing', 'Clearing template project');
 
---
--- Batches
---
+-- }}}
+--Batches {{{
 
 INSERT INTO [[[.DB_SCHEMA]]].clearing_batches
   (project_id, user_id, clearing_batch_type_id, clearing_batch_status_id, label, description)
@@ -30,15 +27,13 @@ VALUES
   ([[[.DB_TEMPLATE_PROJECT]]], [[[.DB_TEMPLATE_USER1]]], 3, 3, 'Prod template #2', 'Clearing template batch: type=Production, status=Suspended'),
   ([[[.DB_TEMPLATE_PROJECT]]], [[[.DB_TEMPLATE_USER1]]], 3, 5, 'Prod template #3', 'Clearing template batch: type=Production, status=Cleared');
 
---
--- Fees
---
+-- }}}
+-- Fees {{{
 
 -- TODO: Add fees
 
---
--- Tasks
---
+-- }}}
+-- Tasks {{{
 
 INSERT INTO `fairgrind`.`tasks`
   (batch_id, input_json, status_id, grinder_uid)
@@ -51,9 +46,8 @@ VALUES
   (7, 1, 2, 511, [[[.DB_TEMPLATE_USER1]]]),
   (9, 1, 2, 511, [[[.DB_TEMPLATE_USER1]]]);
 
---
--- Ledger
---
+-- }}}
+-- Ledger {{{
 
 INSERT INTO `[[[.DB_SCHEMA]]]`.`clearing_ledger`
   (user_id, clearing_task_id, reference, clearing_ledger_status_id, clearing_ledger_label_id, amount, clearing_token_id)
@@ -67,3 +61,4 @@ VALUES
   ([[[.DB_TEMPLATE_USER1]]], 1, 'Pending USD #2', 1, 2, 20.0, 1),
   ([[[.DB_TEMPLATE_USER2]]], NULL, 'Pending USD #1', 1, 2, 30.0, 1);
 
+-- }}}

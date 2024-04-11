@@ -1,4 +1,4 @@
-// region: packages {{{
+// packages {{{
 
 package main
 
@@ -20,8 +20,8 @@ import (
 	// "github.com/redis/go-redis/v9"
 )
 
-// endregion: packages }}}
-// region: globals {{{
+// packages }}}
+// globals {{{
 
 var (
 	env     map[string]string        = utils.GetEnv()
@@ -73,40 +73,66 @@ const (
 	LOG_DEBUG  syslog.Priority = syslog.LOG_DEBUG
 	LOG_EMERG  syslog.Priority = syslog.LOG_EMERG
 
-	MSG_MSG_RECEIVED                   string = "received mq message"
-	MSG_MSG_PARSED                     string = "parsed message"
-	MSG_NO_ROUTING_MATCH               string = "no routing match"
-	MSG_ROUTING_MATCH                  string = "routing match"
-	MSG_SCHEMA_MISMATCH                string = "schema mismatch msg.Database != env[ENV_DB_SCHEMA]"
-	MSG_SUBROUTING_BATCH_NONCREDITABLE string = "sub-routing exception: batch is non-creditable"
-	MSG_SUBROUTING_MULTIPIER_ZERO      string = "sub-routing exception: new batch type multiplier is zero"
-	MSG_SUBROUTING_MULTIPLIERS_MATCH   string = "sub-routing exception: old and new multipliers are the same"
-	MSG_WAITING_FOREVER                string = "waiting forever"
+	MSG_MSG_RECEIVED                    string = "received mq message"
+	MSG_MSG_PARSED                      string = "parsed message"
+	MSG_ROUTING_DONE                    string = "evaluation of the routing rules is completed"
+	MSG_ROUTING_MATCH                   string = "routing match"
+	MSG_SCHEMA_MISMATCH                 string = "schema mismatch msg.Database != env[ENV_DB_SCHEMA]"
+	MSG_SUBROUTING_DONE                 string = "sub-routing done"
+	MSG_SUBROUTING_BATCH_NONCREDITABLE  string = "sub-routing exception: batch is non-creditable"
+	MSG_SUBROUTING_MULTIPLIERS_MISMATCH string = "sub-routing exception: new multiplier is either less than or equal to the old one"
+	MSG_SUBROUTING_SKIPPING_FIELD       string = "skipping field"
+	MSG_WAITING_FOREVER                 string = "waiting forever"
 )
 
 // endregion }}}
 
 func main() { // {{{
 
-	// region: logger {{{
+	// logger {{{
 
 	utils.GetLogger(env[ENV_LOG_SEVERITY], env[ENV_LOG_PREFIX])
 	defer utils.Logger.Close()
 	logger := utils.Logger.Out
 
 	// endregion }}}
-	// region: db {{{
+	// db {{{
 
 	// TODO: use "database/sql" for connection pool and fine tunning
-	// TODO: use "sqlx" for better query handling
+	// TODO: use "sqlx" for better query handling. All in all, this GORM
+	// approach might not have been the best idea, and should be considered for
+	// rewriting to sqlx when the opportunity arises.
 
+	var db *gorm.DB
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?%s", env[ENV_DB_USER], env[ENV_DB_PASSWORD], env[ENV_DB_HOST], env[ENV_DB_PORT], env[ENV_DB_SCHEMA], env[ENV_DB_PARAMS])
 	logger(LOG_DEBUG, dsn, env)
+
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	utils.Panic(err)
 
+	/*
+		for {
+			var err error
+			db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
+			if err == nil {
+				sqlDB, err := db.DB()
+				if err == nil {
+					err = sqlDB.Ping()
+					if err == nil {
+						logger(LOG_DEBUG, db)
+						break
+					}
+					logger(LOG_ERR, err)
+				}
+				logger(LOG_ERR, err)
+			}
+			logger(LOG_ERR, err)
+			time.Sleep(1 * time.Second)
+		}
+	*/
+
 	// endregion }}}
-	// region: redis {{{
+	// redis {{{
 
 	/*
 		Cache = redis.NewClient(&redis.Options{
@@ -132,8 +158,8 @@ func main() { // {{{
 		// }
 	*/
 
-	// endregion: redis }}}
-	// region: mq {{{
+	// redis }}}
+	// mq {{{
 
 	mqUrl := "amqp://" + env[ENV_MQ_USER] + ":" + env[ENV_MQ_PASSWORD] + "@" + env[ENV_MQ_HOST] + ":" + env[ENV_MQ_PORT] + "/"
 	logger(LOG_DEBUG, mqUrl)
@@ -185,163 +211,193 @@ func main() { // {{{
 	)
 	utils.Panic(err, ERR_MQ_FAILED_TO_CONSUME)
 
-	// endregion: mq }}}
-	// region: forever {{{
+	// mq }}}
+	// forever {{{
 
 	var forever chan struct{}
 
 	go func() {
 		for d := range mqMsgs {
 
-			// region: new msg {{{
-
-			logger(LOG_DEBUG, MSG_MSG_RECEIVED, string(d.Body))
-			d.Ack(false)
-
-			// endregion }}}
-			// region: parse msg {{{
+			// parse msg {{{
 
 			var msg models.MqMsg
 
+			d.Ack(false)
 			err := json.Unmarshal(d.Body, &msg)
 			if err != nil {
-				logger(LOG_ERR, ERR_MQ_FAILED_TO_PARSE, err)
+				logger(LOG_ERR, ERR_MQ_FAILED_TO_PARSE, string(d.Body), err)
 				continue
 			}
 			logger(LOG_DEBUG, msg.Xid, MSG_MSG_PARSED, json_pp(msg))
 
 			// endregion }}}
-			// region: routes {{{
+			// schema mismatch {{{
 
 			if msg.Database != env[ENV_DB_SCHEMA] {
 				logger(LOG_DEBUG, msg.Xid, MSG_SCHEMA_MISMATCH, msg.Database, env[ENV_DB_SCHEMA])
 				continue
 			}
 
-			// Order msg.Old keys alphabetically. We could also consider
-			// pre-loading the current state of corresponding records at runtime
-			// using GORM's pre-load feature when various routing rules occur,
-			// but we prefer to use the data received from CDC, as we want the
-			// execution to be as deterministic as possible. All in all, this
-			// GORM approach might not have been the best idea, and should be
-			// considered for rewriting to sqlx when the opportunity arises.
+			// }}}
+			// memo {{{
+
+			// No performance difference between switch and if-else, it is purely
+			// for aesthetics and code readability. I prefer switch over if-else
+			// because it is easier to read, but you might think otherwise...
 			//
 			// The basic assumption is that credits once credited cannot be
-			// deleted, and credits already marked as withdrawable cannot
+			// deleted, and credits already marked as withdrawable cannot be
+			// reclassified during the clearing process.
+			//
+			// Order msg.Old keys alphabetically. It is to be considered later
+			// whether this is appropriate in this way, considering the cases
+			// where, for example, the type and status of a batch are changed
+			// in a single UPDATE. We could also consider pre-loading the
+			// current state of corresponding and related records at runtime
+			// using GORM's pre-load feature when various routing rules occur,
+			// but we prefer to use the data received from CDC, as we want the
+			// execution to be as deterministic as possible.
+			//
 
-			fields := make([]string, 0, len(msg.Old))
-			for k := range msg.Old {
-				fields = append(fields, k)
-			}
-			sort.Strings(fields)
+			// }}}
+			// routes {{{
 
-			for _, field := range fields {
+			switch msg.Type {
 
-				// TODO: clearing_batch_type_id update {{{
-				//
-				// _MESSAGE_
-				// msg.Type: update
-				// msg.Table: clearing_batches
-				// field: clearing_batch_type_id
-				//
-				// _CONDITIONS_
-				// value points to a record in clearing_batch_types where the
-				// multiplier is not equal to zero and differs from the previous
-				// state.
-				//
-				// _ACTION_
-				// Taking into account the batch status and the multiplier:
-				// - If there are clearing_ledger records associated with the
-				//   clearing_tasks records linked to the batch, then update
-				//   those records.
-				// - Create new clearing_ledger records for those clearing_tasks
-				//   records associated with the batch for which a clearing_ledger
-				//   event has not yet been registered."
+			// updates {{{
 
-				if msg.Type == "update" && msg.Table == "clearing_batches" && field == "clearing_batch_type_id" {
-					logger(LOG_DEBUG, msg.Xid, MSG_ROUTING_MATCH, msg.Type, msg.Table, field, msg.Old[field])
+			case "update":
 
-					// validate types {{{
+				// order msg.Old keys alphabetically {{{
 
-					var result *gorm.DB
-					var id_old = uint(msg.Old[field].(float64))
-					var id_new = uint(msg.Data[field].(float64))
-					var type_old = models.ClearingBatchType{GORM: models.GORM{ID: id_old}}
-					var type_new = models.ClearingBatchType{GORM: models.GORM{ID: id_new}}
-
-					result = db.First(&type_new)
-					if result.Error != nil {
-						logger(LOG_ERR, msg.Xid, ERR_DB_FAILED_TO_FETCH_BATCH_TYPE, result.Error.Error())
+				fields := []string{}
+				for k := range msg.Old {
+					if k == "updated_at" || k == "created_at" || k == "deleted_at" {
+						logger(LOG_DEBUG, msg.Xid, MSG_SUBROUTING_SKIPPING_FIELD, k)
 						continue
 					}
+					fields = append(fields, k)
+				}
+				sort.Strings(fields)
 
-					// new multiplier is zero
-					if type_new.Multiplier == 0 {
-						logger(LOG_DEBUG, msg.Xid, MSG_SUBROUTING_MULTIPIER_ZERO)
-						continue
-					}
+				// }}}
 
-					result = db.First(&type_old)
-					if result.Error != nil {
-						logger(LOG_ERR, msg.Xid, ERR_DB_FAILED_TO_FETCH_BATCH_TYPE, result.Error.Error())
-						continue
-					}
+				for _, field := range fields {
 
-					// type changed but multiplier is the same
-					if type_old.Multiplier == type_new.Multiplier {
-						logger(LOG_DEBUG, msg.Xid, MSG_SUBROUTING_MULTIPLIERS_MATCH)
-						continue
+					// TODO: clearing_batches.clearing_batch_type_id update {{{
+					//
+					// _MESSAGE_
+					// msg.Type: update
+					// msg.Table: clearing_batches
+					// field: clearing_batch_type_id
+					//
+					// _CONDITIONS_
+					// value points to a record in clearing_batch_types where the
+					// multiplier is not equal to zero and differs from the previous
+					// state.
+					//
+					// _ACTION_
+					// Taking into account the batch status and the multiplier:
+					// - If there are clearing_ledger records associated with the
+					//   clearing_tasks records linked to the batch, then update
+					//   those records.
+
+					if msg.Type == "update" && msg.Table == "clearing_batches" && field == "clearing_batch_type_id" {
+						logger(LOG_INFO, msg.Xid, MSG_ROUTING_MATCH, msg.Type, msg.Table, field)
+
+						// batch type {{{
+
+						var result *gorm.DB
+						var id_old = uint(msg.Old[field].(float64))
+						var id_new = uint(msg.Data[field].(float64))
+						var type_old = models.ClearingBatchType{GORM: models.GORM{ID: id_old}}
+						var type_new = models.ClearingBatchType{GORM: models.GORM{ID: id_new}}
+
+						result = db.First(&type_new)
+						if result.Error != nil {
+							logger(LOG_ERR, msg.Xid, ERR_DB_FAILED_TO_FETCH_BATCH_TYPE, result.Error.Error())
+							continue
+						}
+
+						result = db.First(&type_old)
+						if result.Error != nil {
+							logger(LOG_ERR, msg.Xid, ERR_DB_FAILED_TO_FETCH_BATCH_TYPE, result.Error.Error())
+							continue
+						}
+
+						// sub-routing exception: new multiplier is either less than or equal to the old one
+						if type_old.Multiplier >= type_new.Multiplier {
+							logger(LOG_INFO, msg.Xid, MSG_SUBROUTING_MULTIPLIERS_MISMATCH, type_old.Multiplier, type_new.Multiplier)
+							continue
+						}
+
+						// }}}
+						// batch status {{{
+
+						/*
+							var status_id = uint(msg.Data["clearing_batch_status_id"].(float64))
+							var status models.ClearingBatchStatus = models.ClearingBatchStatus{Id: status_id}
+							result = db.Preload("ClearingLedgerStatus").First(&status)
+							if result.Error != nil {
+								logger(LOG_ERR, msg.Xid, ERR_DB_FAILED_TO_FETCH_BATCH_STATUS, result.Error.Error())
+								continue
+							}
+							logger(LOG_DEBUG, msg.Xid, json_pp(status))
+
+							// non-creditable batch status
+							if status.ClearingLedgerStatus.Id == 0 {
+								logger(LOG_DEBUG, msg.Xid, MSG_SUBROUTING_BATCH_NONCREDITABLE)
+								continue
+							}
+						*/
+
+						// }}}
+						// TODO: records already in the ledger {{{
+
+						// }}}
+
+						logger(LOG_INFO, msg.Xid, MSG_SUBROUTING_DONE)
 					}
 
 					// }}}
-					// batch status {{{
-
-					var status_id = uint(msg.Data["clearing_batch_status_id"].(float64))
-					var status models.ClearingBatchStatus = models.ClearingBatchStatus{Id: status_id}
-					result = db.Preload("ClearingLedgerStatus").First(&status)
-					if result.Error != nil {
-						logger(LOG_ERR, msg.Xid, ERR_DB_FAILED_TO_FETCH_BATCH_STATUS, result.Error.Error())
-						continue
-					}
-					logger(LOG_DEBUG, msg.Xid, json_pp(status))
-
-					// non-creditable batch status
-					if status.ClearingLedgerStatus.Id == 0 {
-						logger(LOG_DEBUG, msg.Xid, MSG_SUBROUTING_BATCH_NONCREDITABLE)
-						continue
-					}
-
-					// }}}
-					// TODO: records already in the ledger {{{
-
-					logger(LOG_DEBUG, msg.Xid, "dskfléajsdféksjadfkésajféasdjkfsaédifjsaéifjaséd")
-					continue
+					// TODO: clearing_batches.clearing_batch_status_id update {{{
+					//
+					// _MESSAGE_
+					// msg.Type: update
+					// msg.Table: clearing_batches
+					// field: clearing_batch_status_id
+					//
+					// _CONDITIONS_
+					// The clearing_ledger_status_id corresponding to the
+					// clearing_batch_statuses.id indicated by the value is not
+					// NULL.
+					//
+					// _ACTION_
+					// The same as when there is a change in the
+					// clearing_batches.clearing_batch_type_id.
 
 					// }}}
-					// TODO: tasks not yet recorded in the ledger {{{
+					// TODO: clearing_tasks.clearing_task_status_id update {{{
+					//
+					// _MESSAGE_
+					// msg.Type: update
+					// msg.Table: clearing_tasks
+					// field: clearing_task_status_id
+					//
+					// _ACTION_
+					// Taking into account the batch status and type, creating a
+					// ledger record corresponding to the task status and the
+					// grinder-specific fee.
 
 					// }}}
 
 				}
 
-				// }}}
-				// TODO: clearing_batch_status_id update {{{
-				//
-				// _MESSAGE_
-				// msg.Type: update
-				// msg.Table: clearing_batches
-				// field: clearing_batch_status_id
-				//
-				// _CONDITIONS_
-				// The clearing_ledger_status_id corresponding to the
-				// clearing_batch_statuses.id indicated by the value is not
-				// NULL.
-				//
-				// _ACTION_
-				// The same as when there is a change in the
-				// clearing_batches.clearing_batch_type_id.
+			// }}}
+			// inserts {{{
 
-				// }}}
+			case "insert":
 				// TODO: new record in clearing_tasks {{{
 				//
 				// _MESSAGE_
@@ -352,48 +408,18 @@ func main() { // {{{
 				// Taking into account the batch status and type, creating a
 				// ledger record corresponding to the task status and the
 				// grinder-specific fee.
+				//
+				// _MAYBE_
+				// - Create new clearing_ledger records for those clearing_tasks
+				//   records associated with the batch for which a clearing_ledger
+				//   event has not yet been registered."
 
 				// }}}
-				// TODO: clearing_tasks.clearing_task_status_id update {{{
-				//
-				// _MESSAGE_
-				// msg.Type: update
-				// msg.Table: clearing_tasks
-				// field: clearing_task_status_id
-				//
-				// _ACTION_
-				// Taking into account the batch status and type, creating a
-				// ledger record corresponding to the task status and the
-				// grinder-specific fee.
-
-				// }}}
-
-				logger(LOG_DEBUG, msg.Xid, MSG_NO_ROUTING_MATCH, msg.Table, field, msg.Data[field])
-
 			}
 
-			/*
-				// No performance difference between switch and if-else, it is purely
-				// for aesthetics and code readability. I prefer switch over if-else
-				// because it is easier to read, but you might think otherwise...
+			// }}}
 
-				switch msg.Table {
-				case DB_CLEARING_BATCHES:
-					logger(LOG_DEBUG, msg.Xid, MSG_ROUTING_MATCH, msg.Table)
-
-					for field, value := range msg.Old {
-						switch field {
-						case DB_CLEARING_BATCH_STATUS_ID:
-							logger(LOG_DEBUG, msg.Xid, MSG_SUBROUTING_MATCH, msg.Table+"."+field, value, msg.Data[field])
-						default:
-							logger(LOG_DEBUG, msg.Xid, MSG_NO_SUBROUTING_MATCH, msg.Table+"."+field)
-						}
-					}
-				default:
-					logger(LOG_DEBUG, msg.Xid, MSG_NO_ROUTING_MATCH, msg.Table)
-					continue
-				}
-			*/
+			logger(LOG_INFO, msg.Xid, MSG_ROUTING_DONE)
 
 			// endregion }}}
 
@@ -403,6 +429,6 @@ func main() { // {{{
 
 	<-forever
 
-	// endregion: forever }}}
+	// forever }}}
 
-} // }}
+} // }

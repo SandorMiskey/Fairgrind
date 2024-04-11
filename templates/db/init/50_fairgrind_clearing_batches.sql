@@ -1,6 +1,4 @@
---
--- Clearing batch statuses
---
+-- Clearing batch statuses {{{
 
 DROP TABLE IF EXISTS `[[[.DB_SCHEMA]]]`.`clearing_batch_statuses`;
 
@@ -27,9 +25,8 @@ VALUES
   ('Approved', 'All tasks are customer approved or canceled status.', 1),
   ('Cleared', 'Settled in full, the total cost of the bundle is covered.', 2);
 
---
--- Clearing batch types
---
+-- }}}
+-- Clearing batch types {{{
 
 DROP TABLE IF EXISTS `[[[.DB_SCHEMA]]]`.`clearing_batch_types`;
 
@@ -53,9 +50,8 @@ VALUES
   ('Production', 'Production batch', 1.0),
   ('Training', 'Training batch', 0.0);
 
---
--- Clearing batches
---
+-- }}}
+-- Clearing batches {{{
 
 DROP TABLE IF EXISTS `[[[.DB_SCHEMA]]]`.`clearing_batches`;
 
@@ -78,3 +74,4 @@ CREATE TABLE `[[[.DB_SCHEMA]]]`.`clearing_batches` (
   CONSTRAINT `clearing_batches_projects_fk` FOREIGN KEY (`project_id`) REFERENCES `projects` (`id`) ON UPDATE CASCADE
 ) [[[.DB_TABLE_OPTIONS]]];
 
+-- }}}
