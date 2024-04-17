@@ -8,8 +8,8 @@ import (
 
 type GORM struct {
 	ID        uint           `json:"id" form:"id" gorm:"primaryKey"`
-	CreatedAt time.Time      `json:"created_at"`
-	UpdatedAt time.Time      `json:"updated_at"`
+	CreatedAt time.Time      `json:"-"`
+	UpdatedAt time.Time      `json:"-"`
 	DeletedAt gorm.DeletedAt `json:"-" gorm:"index"`
 }
 
@@ -28,7 +28,7 @@ type ClearingBatchStatus struct {
 	Label                  string               `json:"label"`
 	Description            string               `json:"description"`
 	ClearingLedgerStatusId uint                 `json:"-"`
-	ClearingLedgerStatus   ClearingLedgerStatus `json:"clearing_ledger_status"`
+	ClearingLedgerStatus   ClearingLedgerStatus `json:"clearing_ledger_status,omitempty"`
 }
 
 type ClearingBatch struct {
@@ -107,17 +107,23 @@ type ClearingTaskFee struct {
 
 type ClearingTask struct {
 	GORM
-	ClearingBatchId      uint   `json:"clearing_batch_id"`
-	ClearingTaskId       uint   `json:"clearing_task_id,omitempty" gorm:"default:NULL;"`
-	ClearingTaskTypeId   uint   `json:"clearing_task_type_id" gorm:"type:SMALLINT UNSIGNED;"`
-	ClearingTaskStatusId uint   `json:"clearing_task_status_id" gorm:"type:SMALLINT UNSIGNED;"`
-	FinishedAt           string `json:"finished_at,omitempty" gorm:"default:NULL;"`
-	Output               string `json:"output,omitempty"`
-	Reference            string `json:"reference,omitempty" maxLength:"1048576"`
-	StartedAt            string `json:"started_at,omitempty" gorm:"default:NULL;"`
-	TaskId               uint   `json:"task_id" gorm:"type:INT(11);"`
-	TaskRejectIssuesId   uint   `json:"task_reject_issues_id,omitempty" gorm:"type:INT(11); default:NULL;"`
-	UserId               uint   `json:"user_id" gorm:"type:INT(11);"`
+	CreatedAt            time.Time          `json:"created_at"`
+	UpdatedAt            time.Time          `json:"updated_at"`
+	DeletedAt            gorm.DeletedAt     `json:"-" gorm:"index"`
+	ClearingBatchId      uint               `json:"-"`
+	ClearingBatch        ClearingBatch      `json:"clearing_batch"`
+	ClearingTaskId       uint               `json:"clearing_task_id,omitempty" gorm:"default:NULL;"`
+	ClearingTaskTypeId   uint               `json:"-" gorm:"type:SMALLINT UNSIGNED;"`
+	ClearingTaskType     ClearingTaskType   `json:"clearing_task_type"`
+	ClearingTaskStatusId uint               `json:"-" gorm:"type:SMALLINT UNSIGNED;"`
+	ClearingTaskStatus   ClearingTaskStatus `json:"clearing_task_status"`
+	FinishedAt           string             `json:"finished_at,omitempty" gorm:"default:NULL;"`
+	Output               string             `json:"output,omitempty"`
+	Reference            string             `json:"reference,omitempty" maxLength:"1048576"`
+	StartedAt            string             `json:"started_at,omitempty" gorm:"default:NULL;"`
+	TaskId               uint               `json:"task_id" gorm:"type:INT(11);"`
+	TaskRejectIssuesId   uint               `json:"task_reject_issues_id,omitempty" gorm:"type:INT(11); default:NULL;"`
+	UserId               uint               `json:"user_id" gorm:"type:INT(11);"`
 	// Input                *string `json:"input"`
 }
 

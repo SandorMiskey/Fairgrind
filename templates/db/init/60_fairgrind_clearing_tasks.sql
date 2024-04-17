@@ -1,6 +1,5 @@
---
--- Clearing task statuses
---
+-- Clearing task statuses {{{
+
 DROP TABLE IF EXISTS `[[[.DB_SCHEMA]]]`.`clearing_task_statuses`;
 
 CREATE TABLE `[[[.DB_SCHEMA]]]`.`clearing_task_statuses` (
@@ -25,9 +24,8 @@ VALUES
   ('Reviewer rejected', 'The annotation or data upload performed by Grinder has been rejected by reviewer.', 0, 0),
   ('Customer rejected', 'The annotation or data upload performed by Grinder has been rejected by the customer.', 0, 0);
 
---
--- Clearing task types
---
+-- }}}
+-- Clearing task types {{{
 
 DROP TABLE IF EXISTS `[[[.DB_SCHEMA]]]`.`clearing_task_types`;
 
@@ -52,9 +50,8 @@ VALUES
   ('Data collection', 'Grinder collected and uploaded raw data.', 1, 1),
   ('Review', 'Grinder reviewed an annotation or upload.', 1, 1);
 
---
--- Clearing task fees
---
+-- }}}
+-- Clearing task fees {{{
 
 DROP TABLE IF EXISTS `[[[.DB_SCHEMA]]]`.`clearing_task_fees`;
 
@@ -78,9 +75,8 @@ CREATE TABLE `[[[.DB_SCHEMA]]]`.`clearing_task_fees` (
   CONSTRAINT `clearing_task_fees_clearing_token_id_fk` FOREIGN KEY (`clearing_token_id`) REFERENCES `clearing_tokens` (`id`) ON UPDATE CASCADE
 ) [[[.DB_TABLE_OPTIONS]]];
 
---
--- Clearing tasks
---
+-- }}}
+-- Clearing tasks {{{
 
 DROP TABLE IF EXISTS `[[[.DB_SCHEMA]]]`.`clearing_tasks`;
 
@@ -105,6 +101,7 @@ CREATE TABLE `fairgrind`.`clearing_tasks` (
   `deleted_at` DATETIME(3) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `clearing_tasks_deleted_at_idx` (`deleted_at`) USING BTREE,
+  KEY `clearing_tasks_cleared_at_idx` (`cleared_at`) USING BTREE,
   CONSTRAINT `clearing_tasks_clearing_batch_id_fk` FOREIGN KEY (`clearing_batch_id`) REFERENCES `clearing_batches` (`id`) ON UPDATE CASCADE,
   CONSTRAINT `clearing_tasks_clearing_task_id_fk` FOREIGN KEY (`clearing_task_id`) REFERENCES `clearing_tasks` (`id`) ON UPDATE CASCADE,
   CONSTRAINT `clearing_tasks_clearing_task_type_id_fk` FOREIGN KEY (`clearing_task_type_id`) REFERENCES `clearing_task_types` (`id`) ON UPDATE CASCADE,
@@ -113,4 +110,6 @@ CREATE TABLE `fairgrind`.`clearing_tasks` (
   CONSTRAINT `clearing_tasks_user_id_fk` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)  ON UPDATE CASCADE,
   CONSTRAINT `task_reject_issues_id_fk` FOREIGN KEY (`task_reject_issues_id`) REFERENCES `task_reject_issues` (`id`)  ON UPDATE CASCADE
 ) [[[.DB_TABLE_OPTIONS]]];
+
+-- }}}
 

@@ -35,6 +35,8 @@ VALUES
 -- }}}
 -- Tasks {{{
 
+ALTER TABLE [[[.DB_SCHEMA]]].clearing_tasks ADD INDEX `clearing_tasks_cleared_at_idx` (`cleared_at`);
+
 INSERT INTO `fairgrind`.`tasks`
   (batch_id, input_json, status_id, grinder_uid)
 VALUES
