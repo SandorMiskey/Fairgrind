@@ -32,19 +32,18 @@ func TaskUncleared() {
 	// uncleared {{{
 
 	tasks := []models.ClearingTask{}
-	result := tx.
+	qt := tx.
 		Joins("ClearingBatch").
 		Joins("ClearingBatch.ClearingBatchType").
 		Joins("ClearingBatch.ClearingBatchStatus.ClearingLedgerStatus").
 		Joins("ClearingTaskStatus").
 		Joins("ClearingTaskType").
 		Find(&tasks, "cleared_at IS NULL")
-	if result.Error != nil {
+	if qt.Error != nil {
 		tx.Rollback()
-		Logger(LOG_ERR, result.Error)
+		Logger(LOG_ERR, qt.Error)
 		return
 	}
-	// Logger(LOG_DEBUG, JsonPP(tasks))
 
 	// }}}
 	// tasks loop {{{
@@ -52,9 +51,8 @@ func TaskUncleared() {
 	for _, task := range tasks {
 		tx.SavePoint("sp")
 		Logger(LOG_INFO, MSG_TASK_UNCLEARED, task.ID)
-		Logger(LOG_DEBUG, JsonPP(task))
-
-		// checks {{{
+		Logger(LOG_DEBUG, MSG_TASK_UNCLEARED, task)
+		// Logger(LOG_DEBUG, MSG_TASK_UNCLEARED, JsonPP(task))
 
 		// __ClearingBarchStatus and ClearingBatchType__
 		// According to the DDL, clearing_batches.clearing_batch_type_id and
@@ -68,23 +66,40 @@ func TaskUncleared() {
 		// can be less than 0, but this option is left open for the sake of
 		// flexibility, and the frontend should, hopefully, take care of this
 		// anyway.
+		multiplier := task.ClearingBatch.ClearingBatchType.Multiplier
 
 		// __ClearingLedgerStatus__
 		// task.ClearingBatch.ClearingBatchStatus.ClearingLedgerStatus might be
 		// nil, therefore it needs to be checked, as without this, it is undefined
 		// what status the record would be entered into the ledger with.
 		if task.ClearingBatch.ClearingBatchStatus.ClearingLedgerStatus.Id == 0 {
-			Logger(LOG_INFO, MSG_TASK_NONCREDITABLE, task.ID)
-			Logger(LOG_DEBUG, JsonPP(task.ClearingBatch.ClearingBatchStatus.ClearingLedgerStatus))
 			tx.RollbackTo("sp")
+			Logger(LOG_INFO, MSG_TASK_NONCREDITABLE, task.ID)
+			Logger(LOG_DEBUG, MSG_TASK_NONCREDITABLE, "task.ClearingBatch.ClearingBatchStatus.ClearingLedgerStatus", JsonPP(task.ClearingBatch.ClearingBatchStatus.ClearingLedgerStatus))
+			continue
+		}
+		status := task.ClearingBatch.ClearingBatchStatus.ClearingLedgerStatus.Id
+
+		// TODO: check task.ClearingTaskStatus.Payable and task.ClearingTaskStatus.ParentPayable
+
+		// __Grinder fees per project and task type__
+		fees := []models.ClearingTaskFee{}
+		qf := tx.Find(&fees, "project_id = ? AND clearing_task_type_id = ?", task.ClearingBatch.ProjectId, task.ClearingTaskTypeId)
+		if qf.Error != nil {
+			tx.RollbackTo("sp")
+			Logger(LOG_ERR, qf.Error)
+			continue
+		}
+		if len(fees) == 0 {
+			tx.RollbackTo("sp")
+			Logger(LOG_INFO, MSG_TASK_NONCREDITABLE, task.ID)
+			Logger(LOG_DEBUG, MSG_TASK_NONCREDITABLE, "ClearingTaskFee", fees)
 			continue
 		}
 
-		// TODO: check/get fees
-
-		// }}}
-
-		// TODO: get fees
+		Logger(LOG_DEBUG, task.ID, "task.ClearingBatch.ClearingBatchType.Multiplier", multiplier)
+		Logger(LOG_DEBUG, task.ID, "task.ClearingBatch.ClearingBatchStatus.ClearingLedgerStatus.Id", status)
+		Logger(LOG_DEBUG, task.ID, JsonPP(fees))
 
 		// TODO: update ledger & task
 
