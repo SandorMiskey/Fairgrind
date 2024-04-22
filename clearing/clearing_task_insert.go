@@ -80,6 +80,7 @@ func TaskUncleared() {
 		}
 		status := task.ClearingBatch.ClearingBatchStatus.ClearingLedgerStatus.Id
 
+		// TODO: Separate the reading of tasks and the processing of individual tasks, thereby aiding the processing of parent tasks
 		// TODO: check task.ClearingTaskStatus.Payable and task.ClearingTaskStatus.ParentPayable
 
 		// __Grinder fees per project and task type__

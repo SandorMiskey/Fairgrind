@@ -1,6 +1,6 @@
 module api
 
-go 1.21.4
+go 1.22.2
 
 replace models => ../common/models
 
@@ -10,12 +10,12 @@ replace mq => ../common/mq
 
 require (
 	github.com/gofiber/contrib/swagger v1.1.1
-	github.com/gofiber/fiber/v2 v2.52.0
+	github.com/gofiber/fiber/v2 v2.52.4
 	github.com/jmoiron/sqlx v1.3.5
 	github.com/redis/go-redis/v9 v9.4.0
 	github.com/swaggo/swag v1.16.3
 	gorm.io/driver/mysql v1.5.2
-	gorm.io/gorm v1.25.5
+	gorm.io/gorm v1.25.9
 	models v0.0.0-00010101000000-000000000000
 	utils v0.0.0-00010101000000-000000000000
 )
@@ -38,6 +38,7 @@ require (
 	github.com/go-openapi/swag v0.22.3 // indirect
 	github.com/go-openapi/validate v0.22.1 // indirect
 	github.com/go-sql-driver/mysql v1.7.0 // indirect
+	github.com/google/go-cmp v0.6.0 // indirect
 	github.com/google/uuid v1.5.0 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
