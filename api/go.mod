@@ -6,15 +6,13 @@ replace models => ../common/models
 
 replace utils => ../common/utils
 
-replace mq => ../common/mq
-
 require (
 	github.com/gofiber/contrib/swagger v1.1.1
 	github.com/gofiber/fiber/v2 v2.52.4
 	github.com/jmoiron/sqlx v1.3.5
-	github.com/redis/go-redis/v9 v9.4.0
+	github.com/redis/go-redis/v9 v9.5.1
 	github.com/swaggo/swag v1.16.3
-	gorm.io/driver/mysql v1.5.2
+	gorm.io/driver/mysql v1.5.6
 	gorm.io/gorm v1.25.9
 	models v0.0.0-00010101000000-000000000000
 	utils v0.0.0-00010101000000-000000000000
@@ -55,7 +53,7 @@ require (
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasthttp v1.51.0 // indirect
 	github.com/valyala/tcplisten v1.0.0 // indirect
-	go.mongodb.org/mongo-driver v1.11.3 // indirect
+	go.mongodb.org/mongo-driver v1.15.0 // indirect
 	golang.org/x/sys v0.15.0 // indirect
 	golang.org/x/tools v0.7.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
