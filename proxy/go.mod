@@ -1,6 +1,6 @@
 module proxy
 
-go 1.21.4
+go 1.21.9
 
 replace models => ../common/models
 
@@ -9,8 +9,9 @@ replace utils => ../common/utils
 replace mq => ../common/mq
 
 require (
-	github.com/redis/go-redis/v9 v9.4.0
-	gorm.io/gorm v1.25.5
+	github.com/joho/godotenv v1.5.1
+	github.com/redis/go-redis/v9 v9.5.1
+	gorm.io/gorm v1.25.9
 )
 
 require (

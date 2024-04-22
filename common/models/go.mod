@@ -1,8 +1,8 @@
 module models
 
-go 1.22.2
+go 1.21.9
 
-require gorm.io/gorm v1.25.5
+require gorm.io/gorm v1.25.9
 
 require (
 	github.com/jinzhu/inflection v1.0.0 // indirect

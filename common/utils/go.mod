@@ -1,6 +1,6 @@
 module utils
 
-go 1.22.2
+go 1.21.9
 
 require (
 	github.com/SandorMiskey/TEx-kit v0.0.1
