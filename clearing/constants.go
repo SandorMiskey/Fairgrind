@@ -73,6 +73,7 @@ const (
 	// MSG_SUBROUTING_MULTIPLIERS_MISMATCH string = "sub-routing exception: new multiplier is either less than or equal to the old one"
 	// MSG_SUBROUTING_SKIPPING_FIELD string = "skipping field"
 	MSG_TASK_NONCREDITABLE string = "task is non-creditable"
+	MSG_TASK_PROCESSING    string = "processing task"
 	MSG_TASK_UNCLEARED     string = "uncleared task found"
 	MSG_WAITING_FOREVER    string = "waiting forever"
 

@@ -208,7 +208,7 @@ func main() { // {{{
 
 			case msg.Type == "insert" && msg.Table == "clearing_tasks":
 				Logger(LOG_INFO, msg.Xid, MSG_ROUTING_MATCH, msg.Type, msg.Table)
-				TaskUncleared()
+				ClearTask(uint(msg.Data["id"].(float64)))
 
 			// }}}
 			// default {{{
@@ -388,8 +388,23 @@ func main() { // {{{
 
 		for range ticker.C {
 			Logger(LOG_INFO, Env[ENV_TICKER_MARKER])
-			TaskUncleared()
+			Lock.Lock()
+			// uncleared tasks {{{
+
+			tasks := []models.ClearingTask{}
+			qt := Db.Find(&tasks, "cleared_at IS NULL")
+			if qt.Error != nil {
+				Logger(LOG_ERR, qt.Error)
+			} else {
+				Logger(LOG_INFO, MSG_TASK_UNCLEARED, len(tasks))
+				for _, task := range tasks {
+					ClearTask(task.ID)
+				}
+			}
+
+			// }}}
 			// TODO: clearing_batches & clearing_ledger sync
+			Lock.Unlock()
 		}
 	}()
 
