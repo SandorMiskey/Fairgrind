@@ -12,6 +12,7 @@ const (
 	// DB_CLEARING_TASKS           string = "clearing_tasks"
 	// DB_CLEARING_BATCH_ID     string = "clearing_batch_id"
 	// DB_CLEARING_CLEARING_TASK_ID string = "clearing_clearing_task_id"
+	DB_CLEARING_LEDGER_LABEL_TASK uint = 2
 
 	/// }}}
 	// ENV {{{

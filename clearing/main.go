@@ -12,6 +12,8 @@ import (
 	// redirected
 	"models"
 	"utils"
+	// "github.com/SandorMiskey/Fairgrind/common/models"
+	// "github.com/SandorMiskey/Fairgrind/common/utils"
 
 	// 3rd party
 	amqp "github.com/rabbitmq/amqp091-go"
@@ -208,7 +210,10 @@ func main() { // {{{
 
 			case msg.Type == "insert" && msg.Table == "clearing_tasks":
 				Logger(LOG_INFO, msg.Xid, MSG_ROUTING_MATCH, msg.Type, msg.Table)
-				ClearTask(uint(msg.Data["id"].(float64)))
+				err := ClearTask(uint(msg.Data["id"].(float64)), []uint{})
+				if err != nil {
+					Logger(LOG_ERR, msg.Xid, err)
+				}
 
 			// }}}
 			// default {{{
@@ -398,7 +403,10 @@ func main() { // {{{
 			} else {
 				Logger(LOG_INFO, MSG_TASK_UNCLEARED, len(tasks))
 				for _, task := range tasks {
-					ClearTask(task.ID)
+					err := ClearTask(task.ID, []uint{})
+					if err != nil {
+						Logger(LOG_ERR, err)
+					}
 				}
 			}
 

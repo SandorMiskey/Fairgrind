@@ -3,20 +3,25 @@
 package main
 
 import (
+	"encoding/json"
 	"models"
-	// "utils"
+	"time"
+	"utils"
+
+	"gorm.io/gorm"
 )
 
 /// }}}
 
-func ClearTask(id uint) {
+func ClearTask(id uint, path []uint) error {
 
 	// tx {{{
 
+	var result *gorm.DB
+
 	tx := Db.Begin()
 	if err := tx.Error; err != nil {
-		Logger(LOG_ERR, err)
-		return
+		return err
 	}
 
 	defer func() {
@@ -30,26 +35,24 @@ func ClearTask(id uint) {
 	// fetch task {{{
 
 	task := models.ClearingTask{}
-	qt := tx.
+	result = tx.
 		Joins("ClearingBatch").
 		Joins("ClearingBatch.ClearingBatchType").
 		Joins("ClearingBatch.ClearingBatchStatus.ClearingLedgerStatus").
 		Joins("ClearingTaskStatus").
 		Joins("ClearingTaskType").
 		Find(&task, id)
-	if qt.Error != nil {
+	if result.Error != nil {
 		tx.Rollback()
-		Logger(LOG_ERR, qt.Error)
-		return
+		return result.Error
 	}
 	Logger(LOG_INFO, MSG_TASK_PROCESSING, task.ID)
-	Logger(LOG_DEBUG, MSG_TASK_UNCLEARED, task)
-	// Logger(LOG_DEBUG, MSG_TASK_UNCLEARED, JsonPP(task))
+	Logger(LOG_DEBUG, MSG_TASK_UNCLEARED, JsonPP(task))
 
 	// }}}
 	// checks {{{
 
-	// __ClearingBarchStatus and ClearingBatchType__
+	// __ClearingBatchStatus and ClearingBatchType__
 	// According to the DDL, clearing_batches.clearing_batch_type_id and
 	// clearing_batches.clearing_batch_status_id cannot be NULL, and these
 	// fields also act as foreign keys pointing to the appropriate tables,
@@ -71,7 +74,7 @@ func ClearTask(id uint) {
 		tx.Rollback()
 		Logger(LOG_INFO, MSG_TASK_NONCREDITABLE, task.ID)
 		Logger(LOG_DEBUG, MSG_TASK_NONCREDITABLE, "task.ClearingBatch.ClearingBatchStatus.ClearingLedgerStatus", JsonPP(task.ClearingBatch.ClearingBatchStatus.ClearingLedgerStatus))
-		return
+		return nil
 	}
 	status := task.ClearingBatch.ClearingBatchStatus.ClearingLedgerStatus.Id
 
@@ -84,31 +87,92 @@ func ClearTask(id uint) {
 	// grinder fees per project and task type {{{
 
 	fees := []models.ClearingTaskFee{}
-	qf := tx.Find(&fees, "project_id = ? AND clearing_task_type_id = ?", task.ClearingBatch.ProjectId, task.ClearingTaskTypeId)
-	if qf.Error != nil {
+	result = tx.Find(&fees, "project_id = ? AND clearing_task_type_id = ?", task.ClearingBatch.ProjectId, task.ClearingTaskTypeId)
+	if result.Error != nil {
 		tx.Rollback()
-		Logger(LOG_ERR, qf.Error)
-		return
+		return result.Error
 	}
 	if len(fees) == 0 {
 		tx.Rollback()
 		Logger(LOG_INFO, MSG_TASK_NONCREDITABLE, task.ID)
 		Logger(LOG_DEBUG, MSG_TASK_NONCREDITABLE, "ClearingTaskFee", fees)
-		return
+		return nil
 	}
 	Logger(LOG_DEBUG, task.ID, JsonPP(fees))
 
 	// }}}
+	// update ledger and task {{{
 
-	// TODO: update cleared_at
-	// TODO: update ledger & task
-	// TODO: process parant task
+	// delete existing ledger entries
+	result = tx.Where("clearing_task_id = ?", id).Delete(&models.ClearingTask{})
+	if result.Error != nil {
+		tx.Rollback()
+		return result.Error
+	}
 
+	// insert new ledger entries
+	for _, fee := range fees {
+		Logger(LOG_DEBUG, task.ID, JsonPP(fee))
+
+		// subtasks
+		var output []interface{}
+		var subtasks int
+		err := json.Unmarshal([]byte(task.Output), &output)
+		if err != nil {
+			Logger(LOG_NOTICE, err)
+			subtasks = 0
+		} else {
+			subtasks = len(output)
+		}
+
+		// fee
+		var amount float64
+		amount = fee.TaskFee * multiplier
+		amount += fee.SubtaskFee * multiplier * float64(subtasks)
+
+		// ledger entry
+		ledger := models.ClearingLedger{
+			Amount:                 amount,
+			ClearingTaskId:         id,
+			ClearingLedgerStatusId: task.ClearingBatch.ClearingBatchStatus.ClearingLedgerStatus.Id,
+			ClearingLedgerLabelId:  DB_CLEARING_LEDGER_LABEL_TASK,
+			ClearingTokenId:        fee.ClearingTokenId,
+			UserId:                 task.UserId,
+		}
+
+		// insert
+		result := tx.Create(&ledger)
+		if result.Error != nil {
+			tx.Rollback()
+			return result.Error
+		}
+	}
+
+	// update task.cleared_at
+	result = tx.Model(&models.ClearingTask{}).Where("id = ?", id).Update("cleared_at", time.Now())
+	if result.Error != nil {
+		tx.Rollback()
+		return result.Error
+	}
+
+	// process parent task (also check for circular references)
+	path = append(path, id)
+	if task.ClearingTaskId != 0 && !utils.Contains(path, task.ClearingTaskId) {
+		err := ClearTask(task.ClearingTaskId, path)
+		if err != nil {
+			tx.Rollback()
+			return err
+		}
+	}
+
+	// }}}
 	// commit {{{
 
 	if err := tx.Commit().Error; err != nil {
 		Logger(LOG_ERR, err)
+		return err
 	}
+	return nil
 
 	// }}}
 
