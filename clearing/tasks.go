@@ -104,7 +104,7 @@ func ClearTask(id uint, path []uint) error {
 	// update ledger and task {{{
 
 	// delete existing ledger entries
-	result = tx.Where("clearing_task_id = ?", id).Delete(&models.ClearingTask{})
+	result = tx.Where("clearing_task_id = ?", id).Delete(&models.ClearingLedger{})
 	if result.Error != nil {
 		tx.Rollback()
 		return result.Error
@@ -139,6 +139,7 @@ func ClearTask(id uint, path []uint) error {
 			ClearingTokenId:        fee.ClearingTokenId,
 			UserId:                 task.UserId,
 		}
+		Logger(LOG_DEBUG, task.ID, JsonPP(ledger))
 
 		// insert
 		result := tx.Create(&ledger)

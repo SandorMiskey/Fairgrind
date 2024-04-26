@@ -18,6 +18,8 @@ JOIN
     `[[[.DB_SCHEMA]]]`.`clearing_ledger_statuses` ON clearing_ledger.clearing_ledger_status_id = clearing_ledger_statuses.id
 JOIN
 	`[[[.DB_SCHEMA]]]`.`clearing_tokens` ON clearing_ledger.clearing_token_id = clearing_tokens.id
+WHERE
+	clearing_ledger.deleted_at IS NULL
 GROUP BY
 	clearing_ledger.user_id, clearing_tokens.symbol, clearing_ledger_statuses.withdrawable;
 
@@ -56,5 +58,7 @@ LEFT JOIN
 -- 	`[[[.DB_SCHEMA]]]`.`clearing_batch_types` ON clearing_batches.clearing_batch_type_id = clearing_batch_types.id
 LEFT JOIN
 	`[[[.DB_SCHEMA]]]`.`projects` ON clearing_batches.project_id = projects.id
+WHERE
+	clearing_ledger.deleted_at IS NULL
 GROUP BY
 	clearing_ledger.user_id, clearing_ledger_labels.id, projects.id, clearing_tokens.symbol, clearing_ledger_statuses.withdrawable;
