@@ -28,6 +28,17 @@ var (
 
 // endregion: globals }}}
 
+func Contains[T comparable](slice []T, val T) bool { // {{{
+	// Contains checks if a slice contains a given value.
+	// The function uses generics to work with any comparable type.
+	for _, item := range slice {
+		if item == val {
+			return true
+		}
+	}
+	return false
+} // }}}
+
 func GetEnv(dotenv ...string) map[string]string { // {{{
 	err := godotenv.Load(dotenv...)
 	if err != nil {

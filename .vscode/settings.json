@@ -23,6 +23,7 @@
     "martketplace",
     "MEDIUMINT",
     "Navicat",
+    "NONCREDITABLE",
     "Prefork",
     "rabbitmq",
     "requestid",
