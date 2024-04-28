@@ -157,7 +157,7 @@ func main() { // {{{
 		}()
 
 		for d := range mqMsgs {
-
+			Lock.Lock()
 			// parse msg {{{
 
 			var msg models.MqMsg
@@ -185,7 +185,8 @@ func main() { // {{{
 
 			// The basic assumption is that credits once credited cannot be
 			// deleted, and credits already marked as withdrawable cannot be
-			// reclassified during the clearing process.
+			// reclassified during the clearing process. However, this is not
+			// yet the case everywhere...
 			//
 			// BTW, no performance difference between switch and if-else, it is
 			// purely for aesthetics and code readability. I prefer switch over
@@ -216,13 +217,6 @@ func main() { // {{{
 				}
 
 			// }}}
-			// default {{{
-			default:
-				Logger(LOG_INFO, msg.Xid, MSG_ROUTING_MISMATCH, msg.Type, msg.Table)
-
-				// }}}
-
-			}
 			/* obsolete - to be deleted {{{
 			switch msg.Type {
 
@@ -367,11 +361,18 @@ func main() { // {{{
 
 			}
 			*/ // }}}
+			// default {{{
+			default:
+				Logger(LOG_INFO, msg.Xid, MSG_ROUTING_MISMATCH, msg.Type, msg.Table)
+
+				// }}}
+
+			}
 
 			Logger(LOG_INFO, msg.Xid, MSG_ROUTING_DONE)
 
 			// }}}
-
+			Lock.Unlock()
 		}
 	}()
 
@@ -381,13 +382,13 @@ func main() { // {{{
 	interval, err := time.ParseDuration(Env[ENV_TICKER_INTERVAL])
 	utils.Panic(err)
 	ticker := time.NewTicker(interval)
-	defer ticker.Stop()
 
 	go func() {
 		defer func() {
 			if r := recover(); r != nil {
 				Logger(LOG_ERR, r)
 			}
+			ticker.Stop()
 			Lock.Unlock()
 		}()
 
@@ -411,7 +412,28 @@ func main() { // {{{
 			}
 
 			// }}}
-			// TODO: clearing_batches & clearing_ledger sync
+			// learing_batches & clearing_tasks sync {{{
+
+			// fetching tasks where task.updated_at < batch.updated_at
+			tasks = []models.ClearingTask{}
+			qb := Db.
+				Joins("JOIN clearing_batches ON clearing_batches.id = clearing_tasks.clearing_batch_id").
+				Where("clearing_tasks.updated_at < clearing_batches.updated_at").
+				Find(&tasks)
+			if qb.Error != nil {
+				Logger(LOG_ERR, qb.Error)
+			} else {
+				Logger(LOG_INFO, MSG_TASK_BATCH_UPDATED, len(tasks))
+				for _, task := range tasks {
+					Logger(LOG_INFO, task.ID, task.UpdatedAt, task.ClearingBatch.UpdatedAt)
+					err := ClearTask(task.ID, []uint{})
+					if err != nil {
+						Logger(LOG_ERR, err)
+					}
+				}
+			}
+
+			// }}}
 			Lock.Unlock()
 		}
 	}()

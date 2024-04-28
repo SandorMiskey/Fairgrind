@@ -13,7 +13,7 @@ import (
 
 /// }}}
 
-func ClearTask(id uint, path []uint) error {
+func ClearTask(id uint, path []uint) error { // {{{
 
 	// tx {{{
 
@@ -46,7 +46,7 @@ func ClearTask(id uint, path []uint) error {
 		tx.Rollback()
 		return result.Error
 	}
-	Logger(LOG_INFO, MSG_TASK_PROCESSING, task.ID)
+	Logger(LOG_DEBUG, MSG_TASK_PROCESSING, task.ID)
 	Logger(LOG_DEBUG, MSG_TASK_UNCLEARED, JsonPP(task))
 
 	// }}}
@@ -71,10 +71,9 @@ func ClearTask(id uint, path []uint) error {
 	// nil, therefore it needs to be checked, as without this, it is undefined
 	// what status the record would be entered into the ledger with.
 	if task.ClearingBatch.ClearingBatchStatus.ClearingLedgerStatus.Id == 0 {
-		tx.Rollback()
 		Logger(LOG_INFO, MSG_TASK_NONCREDITABLE, task.ID)
 		Logger(LOG_DEBUG, MSG_TASK_NONCREDITABLE, "task.ClearingBatch.ClearingBatchStatus.ClearingLedgerStatus", JsonPP(task.ClearingBatch.ClearingBatchStatus.ClearingLedgerStatus))
-		return nil
+		return commitTask(id, tx)
 	}
 	status := task.ClearingBatch.ClearingBatchStatus.ClearingLedgerStatus.Id
 
@@ -93,10 +92,9 @@ func ClearTask(id uint, path []uint) error {
 		return result.Error
 	}
 	if len(fees) == 0 {
-		tx.Rollback()
 		Logger(LOG_INFO, MSG_TASK_NONCREDITABLE, task.ID)
 		Logger(LOG_DEBUG, MSG_TASK_NONCREDITABLE, "ClearingTaskFee", fees)
-		return nil
+		return commitTask(id, tx)
 	}
 	Logger(LOG_DEBUG, task.ID, JsonPP(fees))
 
@@ -149,13 +147,6 @@ func ClearTask(id uint, path []uint) error {
 		}
 	}
 
-	// update task.cleared_at
-	result = tx.Model(&models.ClearingTask{}).Where("id = ?", id).Update("cleared_at", time.Now())
-	if result.Error != nil {
-		tx.Rollback()
-		return result.Error
-	}
-
 	// process parent task (also check for circular references)
 	path = append(path, id)
 	if task.ClearingTaskId != 0 && !utils.Contains(path, task.ClearingTaskId) {
@@ -169,12 +160,30 @@ func ClearTask(id uint, path []uint) error {
 	// }}}
 	// commit {{{
 
-	if err := tx.Commit().Error; err != nil {
-		Logger(LOG_ERR, err)
-		return err
-	}
-	return nil
+	return commitTask(id, tx)
 
 	// }}}
 
-}
+} // }}}
+
+func commitTask(id uint, tx *gorm.DB) error { // {{{
+	// update task.cleared_at
+	result := tx.Model(&models.ClearingTask{}).Where("id = ?", id).Update("cleared_at", time.Now())
+	if result.Error != nil {
+		tx.Rollback()
+		Logger(LOG_ERR, id, result.Error)
+		return result.Error
+	}
+
+	// commit
+	if err := tx.Commit().Error; err != nil {
+		Logger(LOG_ERR, id, err)
+		return err
+	}
+
+	// all good
+	Logger(LOG_INFO, id, MSG_TASK_CLEARED)
+	return nil
+} // }}}
+
+// vim: foldmethod=marker
