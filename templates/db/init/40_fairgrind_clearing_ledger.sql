@@ -74,7 +74,7 @@ CREATE TABLE `[[[.DB_SCHEMA]]]`.`clearing_ledger` (
 	KEY `clearing_ledger_deleted_at_idx` (`deleted_at`) USING BTREE,
 	CONSTRAINT `clearing_ledger_user_id_fk` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON UPDATE CASCADE,
 	-- CONSTRAINT `clearing_ledger_referred_users_id_fk` FOREIGN KEY (`referred_user_id`) REFERENCES `users` (`id`)  ON UPDATE CASCADE,
-	-- CONSTRAINT `clearing_ledger_clearing_task_id_fk` FOREIGN KEY (`clearing_task_id`) REFERENCES `clearing_tasks` (`id`) ON UPDATE CASCADE,
+	CONSTRAINT `clearing_ledger_clearing_task_id_fk` FOREIGN KEY (`clearing_task_id`) REFERENCES `clearing_tasks` (`id`) ON UPDATE CASCADE,
 	CONSTRAINT `clearing_ledger_clearing_token_id_fk` FOREIGN KEY (`clearing_token_id`) REFERENCES `clearing_tokens` (`id`) ON UPDATE CASCADE,
 	CONSTRAINT `clearing_ledger_clearing_ledger_status_id_fk` FOREIGN KEY (`clearing_ledger_status_id`) REFERENCES `clearing_ledger_statuses` (`id`) ON UPDATE CASCADE,
 	CONSTRAINT `clearing_ledger_clearing_ledger_label_id_fk` FOREIGN KEY (`clearing_ledger_label_id`) REFERENCES `clearing_ledger_labels` (`id`) ON UPDATE CASCADE
