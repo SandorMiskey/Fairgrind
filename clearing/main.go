@@ -181,24 +181,11 @@ func main() { // {{{
 			}
 
 			// }}}
-			// memo {{{
-
-			// The basic assumption is that credits once credited cannot be
-			// deleted, and credits already marked as withdrawable cannot be
-			// reclassified during the clearing process. However, this is not
-			// yet the case everywhere...
-			//
-			// BTW, no performance difference between switch and if-else, it is
-			// purely for aesthetics and code readability. I prefer switch over
-			// if-else because it is easier to read, but you might think
-			// otherwise...
-
-			// }}}
 			// routes {{{
 
 			switch {
 
-			// new record in clearing_tasks {{{
+			// clearing_tasks insert {{{
 			//
 			// _MESSAGE_
 			// msg.Type: insert
@@ -214,6 +201,37 @@ func main() { // {{{
 				err := ClearTask(uint(msg.Data["id"].(float64)), []uint{})
 				if err != nil {
 					Logger(LOG_ERR, msg.Xid, err)
+				}
+
+			// }}}
+			// clearing_tasks update {{{
+			//
+			// _MESSAGE_
+			// msg.Type: update
+			// msg.Table: clearing_tasks
+			// field: clearing_batch_id || clearing_task_te_id || clearing_task_status_id || output || user_id
+			//
+			// _ACTION_
+			// Taking into account the batch status and type, creating a
+			// ledger record corresponding to the task status and the
+			// grinder-specific fee.
+
+			case msg.Type == "update" && msg.Table == "clearing_tasks":
+				var skip bool = true
+				for k := range msg.Old {
+					if k == "clearing_batch_id" || k == "clearing_task_te_id" || k == "clearing_task_status_id" || k == "output" || k == "user_id" {
+						skip = false
+						break
+					}
+				}
+				if !skip {
+					Logger(LOG_INFO, msg.Xid, MSG_ROUTING_MATCH, msg.Type, msg.Table)
+					err := ClearTask(uint(msg.Data["id"].(float64)), []uint{})
+					if err != nil {
+						Logger(LOG_ERR, msg.Xid, err)
+					}
+				} else {
+					Logger(LOG_INFO, msg.Xid, MSG_ROUTING_MISMATCH, msg.Type, msg.Table)
 				}
 
 			// }}}
@@ -341,19 +359,6 @@ func main() { // {{{
 					// clearing_batches.clearing_batch_type_id.
 
 					// }}}
-					// TODO: clearing_tasks.clearing_task_status_id update {{{
-					//
-					// _MESSAGE_
-					// msg.Type: update
-					// msg.Table: clearing_tasks
-					// field: clearing_task_status_id
-					//
-					// _ACTION_
-					// Taking into account the batch status and type, creating a
-					// ledger record corresponding to the task status and the
-					// grinder-specific fee.
-
-					// }}}
 
 				}
 
@@ -361,11 +366,8 @@ func main() { // {{{
 
 			}
 			*/ // }}}
-			// default {{{
 			default:
 				Logger(LOG_INFO, msg.Xid, MSG_ROUTING_MISMATCH, msg.Type, msg.Table)
-
-				// }}}
 
 			}
 
